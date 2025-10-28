@@ -1,0 +1,129 @@
+#include <stdio.h>
+
+#include "game.h"
+#include "labyrinth.h"
+#include "labyrinth_generator.h"
+#include "labyrinth_repository.h"
+#include "menu.h"
+#include "user_interface.h"
+
+
+#define LABYRINTH_NAME_LENGTH 40
+#define LABYRINTH_COUNT_MAX 100
+
+
+static void destroyLabyrinthFromMenu(Menu* menu);
+
+static void destroyLabyrinthFromMenu(Menu* menu) {
+    destroyLabyrinth(menu->labyrinth);
+    free(menu->labyrinth);
+    menu->labyrinth = NULL;
+}
+
+void createLabyrinthAction(Menu* menu) {
+    // Récupère les informations de l'utilisateur
+    size_t height;
+    size_t width;
+    char* name = malloc(LABYRINTH_NAME_LENGTH * sizeof(char));
+    displayLabyrinthGenerationForm(&height, &width, name, LABYRINTH_NAME_LENGTH);
+
+    // Génération et svg du labyrinthe
+    Labyrinth* labyrinth = generateLabyrinth(height, width);
+    labyrinth->name = name;
+
+    saveLabyrinth(name, labyrinth);
+
+    // On enregistre le labyrinthe dans le menu
+    if (menu->labyrinth != NULL) {
+        destroyLabyrinthFromMenu(menu);
+    }
+
+    menu->labyrinth = labyrinth;
+}
+
+void loadLabyrinthAction(Menu* menu) {
+    // Créé les données
+    char** names = malloc(sizeof(char*) * LABYRINTH_COUNT_MAX);
+    for (int i = 0; i < LABYRINTH_COUNT_MAX; i++) {
+        names[i] = malloc(sizeof(char) * LABYRINTH_NAME_LENGTH);
+    }
+
+    //  Récupère les données
+    int count = getLabyrinthsNames(names, LABYRINTH_COUNT_MAX, LABYRINTH_NAME_LENGTH);
+    int index = displayLabyrintsAvailable(names, count);
+
+    char* name = NULL;
+    if (index >= 0) {
+        name = names[index];
+    }
+
+    // Détruit les noms
+    for (int i = 0; i < LABYRINTH_COUNT_MAX; i++) {
+        if (i != index) {
+            free(names[i]);
+        }
+    }
+    free(names);
+
+    // Effectue l'action choisi.
+    if (index < 0) {
+        return;
+    }
+
+    if (menu->labyrinth != NULL) {
+        destroyLabyrinthFromMenu(menu);
+    }
+
+    menu->labyrinth = loadLabyrinth(name);
+    free(name);
+}
+
+void playGameAction(Menu* menu) {
+    Game* game = startGame(menu->labyrinth);
+    
+    while(!isGameOver(game)) {
+        Direction direction;
+        do {
+            direction = displayGame(game);
+        } while (!move(game, direction));
+    }
+
+    displayGameOver(game);
+    free(game);
+
+    // Recharge le labyrinthe
+    Labyrinth* new = loadLabyrinth(menu->labyrinth->name);
+    destroyLabyrinthFromMenu(menu);
+    menu->labyrinth = new;
+}
+
+
+int main(void) {
+    Menu menu;
+    menu.labyrinth = NULL;
+
+    Action action;
+    do {
+        action = displayMenu(&menu);
+
+        switch (action) {
+            case ACT_CREATE:
+                createLabyrinthAction(&menu);
+                break;
+            case ACT_LOAD:
+                loadLabyrinthAction(&menu);
+                break;
+            case ACT_PLAY:
+                playGameAction(&menu);
+                break;
+            default:
+                break;
+        }
+    } while (action != ACT_QUIT);
+
+    if (menu.labyrinth != NULL) {
+        destroyLabyrinthFromMenu(&menu);
+    }
+
+    return 0;
+}

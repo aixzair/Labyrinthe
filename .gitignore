@@ -1,0 +1,16 @@
+# =========================
+# Visual Studio Code
+# =========================
+.vscode/
+.history/
+*.code-workspace
+
+# =========================
+# Build directories (C/C++)
+# =========================
+/bin/
+/obj/
+/build/
+/out/
+/Debug/
+/Release/
