@@ -1,4 +1,9 @@
-// TODO : tests
+# TODO
+
+- [ ] Doxygene
+- [ ] Tests
+
+
 // TODO : structuration de fichiers (static)
 // TODO : labyrinth destroy
 
@@ -13,62 +18,6 @@ copier config debbuger
 labyrinth -> matrice + enum
 
 
-
-
-
-void createLabyrinth() {
-    size_t height;
-    size_t width;
-    char name[LABYRINTH_NAME_LENGHT];
-
-    displayLabyrinthCreationForm(&height, &width, &name);
-
-    Labyrinth labyrinth = generateLabyrinth(height, width);
-
-    saveLabyrinth(name, labyrinth);
-
-    destroyLabyrinth(labyrinth);
-}
-
-
-
-
-
-
-static void clearInterface();
-
-
-static void clearInterface() {
-    system("clear");
-}
-
-
-Action getAction(const MenuData* menu) {
-    clearInterface();
-
-    printf("1. Créer un labyrinthe\n");
-    printf("2. Charger un labyrinthe\n");
-    if (menu->LabyrinthLoaded) {
-        printf("3. Jouer");
-    }
-    printf("4. Quitter");
-
-    int choice = (menu->LabyrinthLoaded)
-        ? askForIntInList([1, 2, 3, 4], 4)
-        : askForIntInList([1, 2, 4], 3);
-    
-    switch (choice) {
-        case 1: return ACT_CREATE;
-        case 2: return ACT_LOAD;
-        case 3: return ACT_PLAY;
-        default: return ACT_QUIT;
-    }
-}
-
-
-
-
-Direction getDirection();
 
 void displayLabyrinth(const Labyrinth* labyrinth) {
     for (size_t line = 0; line < labyrinth->height; line++) {

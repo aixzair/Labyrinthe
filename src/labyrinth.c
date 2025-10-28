@@ -1,25 +1,25 @@
 #include "labyrinth.h"
 
-int isValidSquare(const Labyrinth* labyrinth, int x, int y) {
+int isValidSquare(const Labyrinth* labyrinth, int line, int col) {
     return labyrinth != NULL
-        && (size_t) y < labyrinth->height
-        && (size_t) x < labyrinth->width;
+        && (size_t) line < labyrinth->height
+        && (size_t) col < labyrinth->width;
 }
 
-Square getSquare(const Labyrinth* labyrinth, int x, int y) {
-    if (!isValidSquare(labyrinth, x, y)) {
+Square getSquare(const Labyrinth* labyrinth, int line, int col) {
+    if (!isValidSquare(labyrinth, line, col)) {
         return SQU_NULL;
     }
 
-    return labyrinth->squares[y][x];
+    return labyrinth->squares[line][col];
 }
 
-int setSquare(const Labyrinth* labyrinth, int x, int y, Square square) {
-    if (!isValidSquare(labyrinth, x, y)) {
+int setSquare(const Labyrinth* labyrinth, int line, int col, Square square) {
+    if (!isValidSquare(labyrinth, line, col)) {
         return 0;
     }
 
-    labyrinth->squares[y][x] = square;
+    labyrinth->squares[line][col] = square;
 
     return 1;
 }

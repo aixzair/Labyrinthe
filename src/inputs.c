@@ -82,21 +82,24 @@ int askForIntInRange(int min, int max) {
     return input;
 }
 
-void askForString(char* string, size_t length) {
+void askForString(char *string, size_t length) {
+    // Paramètres invalides
     if (string == NULL || length == 0) {
         return;
     }
 
-    if (fgets(string, length, stdin) != NULL) {
-        size_t realLength = strlen(string);
-
-        if (realLength > 0 && string[realLength - 1] == '\n') {
-            string[realLength - 1] = '\0';
-        } else {
-            clearBuffer();
-        }
-    } else {
+    // Entrée invalide
+    if (fgets(string, length, stdin) == NULL) {
         string[0] = '\0';
+        clearBuffer();
+        return;
+    }
+
+    // Gère la gin de la chaine
+    size_t len = strlen(string);
+    if (len > 0 && string[len - 1] == '\n') {
+        string[len - 1] = '\0';
+    } else {
         clearBuffer();
     }
 }

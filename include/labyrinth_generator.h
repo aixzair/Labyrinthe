@@ -5,4 +5,6 @@
 
 Labyrinth* generateLabyrinth(size_t height, size_t width);
 
+void addObjectsInLabyrinth(Labyrinth* labyrinth);
+
 #endif

@@ -29,6 +29,9 @@ void createLabyrinthAction(Menu* menu) {
 
     // Génération et svg du labyrinthe
     Labyrinth* labyrinth = generateLabyrinth(height, width);
+    printf("labyrinthe généré\n");
+
+    addObjectsInLabyrinth(labyrinth);
     labyrinth->name = name;
 
     saveLabyrinth(name, labyrinth);

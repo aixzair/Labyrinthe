@@ -5,6 +5,7 @@
 #include <time.h>
 
 #define MATRICE_WALL -1
+#define MAX_TRY 1000
 
 typedef struct {
     int groupCount;
@@ -80,8 +81,7 @@ static int findInnerPlaceToMerge(const Matrice* matrice, size_t* line, size_t* c
     const int colMin = 1;
     const int colMax = matrice->cols - 2;
 
-    const int maxTry = 1000;
-    for (int try = 0; try < maxTry; try++) {
+    for (int try = 0; try < MAX_TRY; try++) {
         *line = randomInt(lineMin, lineMax);
         *col = randomInt(colMin, colMax);
 
@@ -200,8 +200,7 @@ static Labyrinth* newLabyrinthFromMatrice(Matrice matrice) {
 }
 
 static int findRamdomSquare(const Labyrinth* labyrinth, Square type, size_t* line, size_t* col) {
-    const int maxTry = 1000;
-    for (int try = 0; try < maxTry; try++) {
+    for (int try = 0; try < MAX_TRY; try++) {
         *line = randomInt(1, labyrinth->height - 2);
         *col = randomInt(1, labyrinth->width - 2);
 
@@ -225,14 +224,18 @@ Labyrinth* generateLabyrinth(size_t height, size_t width) {
     Labyrinth* labyrinth = newLabyrinthFromMatrice(matrice);
     destroyMatrice(&matrice);
 
-
-    int coinCount = (height - 2) * (width - 2) * 0.1;
-    int trapCount = (height - 2) * (width - 2) * 0.1;
-
     setSquare(labyrinth, 0, 1, SQU_PLAYER);
-    setSquare(labyrinth, height - 1, width - 2, SQU_DOOR);
+    setSquare(labyrinth, height - 1, width - 2, SQU_END);
 
-    // Place les éléments
+    return labyrinth;
+}
+
+void addObjectsInLabyrinth(Labyrinth* labyrinth) {
+    srand(time(NULL));
+
+    int coinCount = (labyrinth->height - 2) * (labyrinth->width - 2) * 0.1;
+    int trapCount = (labyrinth->height - 2) * (labyrinth->width - 2) * 0.1;
+
     size_t line;
     size_t col;
 
@@ -250,7 +253,16 @@ Labyrinth* generateLabyrinth(size_t height, size_t width) {
 
     if (findRamdomSquare(labyrinth, SQU_CORRIDOR, &line, &col)) {
         setSquare(labyrinth, line, col, SQU_KEY);
-    }
 
-    return labyrinth;
+        for (size_t l = 0; l < labyrinth->height; l++) {
+            for (size_t c = 0; c < labyrinth->width; c++) {
+                if (getSquare(labyrinth, l, c) == SQU_END) {
+                    setSquare(labyrinth, l, c, SQU_DOOR);
+
+                    l = labyrinth->height;
+                    break;
+                }
+            }
+        }
+    }
 }

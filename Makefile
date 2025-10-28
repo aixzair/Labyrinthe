@@ -25,9 +25,6 @@ $(P_OBJ)/labyrinth.o: $(P_SRC)/labyrinth.c $(P_INCLUDE)/labyrinth.h
 $(P_OBJ)/labyrinth_generator.o: $(P_SRC)/labyrinth_generator.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ -c $<
 
-$(P_OBJ)/labyrinth_generator.o: $(P_SRC)/labyrinth_generator.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ -c $<
-
 $(P_OBJ)/labyrinth_repository.o: $(P_SRC)/labyrinth_repository.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ -c $<
 
