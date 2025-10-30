@@ -13,7 +13,7 @@ EXEC = $(P_BIN)/labyrinth.bin
 
 all: $(EXEC) | mkdirs
 
-$(EXEC): $(P_OBJ)/main.o $(P_OBJ)/labyrinth.o $(P_OBJ)/labyrinth_generator.o $(P_OBJ)/inputs.o $(P_OBJ)/labyrinth_repository.o $(P_OBJ)/user_interface.o $(P_OBJ)/game.o
+$(EXEC): $(P_OBJ)/main.o $(P_OBJ)/labyrinth.o $(P_OBJ)/labyrinth_generator.o $(P_OBJ)/inputs.o $(P_OBJ)/labyrinth_repository.o $(P_OBJ)/user_interface.o $(P_OBJ)/game.o $(P_OBJ)/leaderboard.o
 	$(CC) $(CFLAGS) $(CPPFLAGS) $^ -o $@
 
 $(P_OBJ)/main.o: $(P_SRC)/main.c
@@ -35,6 +35,9 @@ $(P_OBJ)/game.o: $(P_SRC)/game.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ -c $<
 
 $(P_OBJ)/user_interface.o: $(P_SRC)/user_interface.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ -c $<
+
+$(P_OBJ)/leaderboard.o: $(P_SRC)/leaderboard.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ -c $<
 
 mkdirs:

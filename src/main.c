@@ -1,15 +1,19 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "game.h"
 #include "labyrinth.h"
 #include "labyrinth_generator.h"
 #include "labyrinth_repository.h"
+#include "leaderboard.h"
 #include "menu.h"
 #include "user_interface.h"
 
 
 #define LABYRINTH_NAME_LENGTH 40
 #define LABYRINTH_COUNT_MAX 100
+
+#define SCORE_COUNT_MAX 10
 
 
 static void destroyLabyrinthFromMenu(Menu* menu);
@@ -82,6 +86,7 @@ void loadLabyrinthAction(Menu* menu) {
 }
 
 void playGameAction(Menu* menu) {
+    // Joue au Jeu
     Game* game = startGame(menu->labyrinth);
     
     while(!isGameOver(game)) {
@@ -91,7 +96,27 @@ void playGameAction(Menu* menu) {
         } while (!move(game, direction));
     }
 
-    displayGameOver(game);
+    // Game over
+    Leaderboard* leaderboard = loadLeaderboard(game->labyrinth->name);
+    if (leaderboard == NULL) {
+        leaderboard = createLeaderboard(SCORE_COUNT_MAX);
+    }
+
+    int position = getLeaderboardPosition(leaderboard, game->score);
+    if (position >= 0) {
+        char playerName[PLAYER_NAME_LENGTH];
+        displayGameOver(game, leaderboard, playerName);
+
+        Score score;
+        strcpy(score.playerName, playerName);
+        score.score = game->score;
+
+        updateLeaderboard(leaderboard, score);
+    } else {
+        displayGameOver(game, leaderboard, NULL);
+    }
+
+    destroyLeaderboard(leaderboard);
     free(game);
 
     // Recharge le labyrinthe

@@ -27,8 +27,6 @@ Game* startGame(Labyrinth* labyrinth) {
     return game;
 }
 
-int skdjflsqdjqs = 0;
-
 int move(Game* game, Direction direction) {
     if (game == NULL || game->labyrinth == NULL) {
         return 0;

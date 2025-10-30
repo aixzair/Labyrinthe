@@ -22,7 +22,6 @@ typedef struct {
     Square** squares;
 } Labyrinth;
 
-
 int isValidSquare(const Labyrinth* labyrinth, int line, int col);
 
 Square getSquare(const Labyrinth* labyrinth, int line, int col);

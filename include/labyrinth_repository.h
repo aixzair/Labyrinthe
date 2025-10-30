@@ -2,20 +2,19 @@
 #define LABYRINTH_REPOSITORY_H
 
 #include "labyrinth.h"
-
-typedef struct {
-    char* playerName;
-    int score;
-} Score;
+#include "leaderboard.h"
 
 int getLabyrinthsNames(char** names, int namesLength, int stringLength);
 
-Labyrinth* loadLabyrinth(char* fileName);
+Labyrinth* loadLabyrinth(const char* labyrinthName);
 
-int saveLabyrinth(const char* fileName, const Labyrinth* labyrinth);
+int saveLabyrinth(const char* labyrinthName, const Labyrinth* labyrinth);
 
-// int loadScores(const char* fileName, Score* scores, int scoresLength);
 
-// int saveScores(const char* fileName, Score* scores, int count);
+// count or -1
+Leaderboard* loadLeaderboard(const char* labyrinthName);
+
+// 1 or 0
+int saveLeaderboard(const char* labyrinthName, const Leaderboard* leaderboard);
 
 #endif

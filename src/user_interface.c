@@ -131,9 +131,22 @@ Direction displayGame(const Game* game) {
     }
 }
 
-void displayGameOver(const Game* game) {
+void displayGameOver(const Game* game, const Leaderboard* leaderboard, char playerName[PLAYER_NAME_LENGTH]) {
     resetDisplay();
     printf("Partie terminé.\n");
     printf("Score : %d.\n", game->score);
-    fastAskForChar();
+
+    if (leaderboard->count > 0) {
+        printf("\nClassement :\n");
+        for (int i = 0; i < leaderboard->count; i++) {
+            Score score = leaderboard->scores[i];
+            printf("%2d. %4d : %s\n", i + 1, score.score, score.playerName);
+        }
+    }
+
+    if (playerName == NULL) {
+        fastAskForChar();
+    } else {
+        askForString(playerName, PLAYER_NAME_LENGTH);
+    }
 }

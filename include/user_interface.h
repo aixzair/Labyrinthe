@@ -2,6 +2,7 @@
 #define USER_INTERFACE_H
 
 #include "game.h"
+#include "leaderboard.h"
 #include "menu.h"
 
 Action displayMenu(const Menu* menu);
@@ -12,6 +13,6 @@ int displayLabyrintsAvailable(char** names, int count);
 
 Direction displayGame(const Game* game);
 
-void displayGameOver(const Game* game);
+void displayGameOver(const Game* game, const Leaderboard* leaderboard, char playerName[PLAYER_NAME_LENGTH]);
 
 #endif
