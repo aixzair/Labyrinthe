@@ -112,6 +112,8 @@ void playGameAction(Menu* menu) {
         score.score = game->score;
 
         updateLeaderboard(leaderboard, score);
+
+        saveLeaderboard(game->labyrinth->name, leaderboard);
     } else {
         displayGameOver(game, leaderboard, NULL);
     }

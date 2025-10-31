@@ -147,6 +147,7 @@ void displayGameOver(const Game* game, const Leaderboard* leaderboard, char play
     if (playerName == NULL) {
         fastAskForChar();
     } else {
+        printf("\nEntrez votre nom :\n");
         askForString(playerName, PLAYER_NAME_LENGTH);
     }
 }

@@ -7,6 +7,7 @@ P_INCLUDE = include
 P_OBJ = obj
 P_BIN = bin
 P_LABYRINTHS = labyrinths
+P_SCORES = scores
 
 EXEC = $(P_BIN)/labyrinth.bin
 
@@ -44,6 +45,7 @@ mkdirs:
 	mkdir -p $(P_OBJ)
 	mkdir -p $(P_BIN)
 	mkdir -p $(P_LABYRINTHS)
+	mkdir -p $(P_SCORES)
 
 clean:
 	rm -f $(P_OBJ)/*

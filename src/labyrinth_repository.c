@@ -6,6 +6,7 @@
 #include "labyrinth.h"
 
 #define PATH_LABYRINTH "labyrinths"
+#define PATH_SCORE "scores"
 #define FILE_PATH_LENGTH 200
 
 static char* getFilePath(const char* fileName);
@@ -32,7 +33,7 @@ static char* getScoreFilePath(const char* fileName) {
         return NULL;
     }
 
-    if (sprintf(filePath, PATH_LABYRINTH "/%s_score.cfg", fileName) < 0) {
+    if (sprintf(filePath, PATH_SCORE "/%s_score.cfg", fileName) < 0) {
         free(filePath);
 
         return NULL;

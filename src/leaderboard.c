@@ -1,6 +1,7 @@
 #include "leaderboard.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 Leaderboard* createLeaderboard(int count) {
     Leaderboard* leaderboard = malloc(sizeof(Leaderboard));
@@ -15,7 +16,7 @@ Leaderboard* createLeaderboard(int count) {
 int getLeaderboardPosition(const Leaderboard* leaderboard, int score) {
     int position;
     for (position = 0; position < leaderboard->count; position++) {
-        if (score > leaderboard->scores[position]) {
+        if (score > leaderboard->scores[position].score) {
             break;
         }
     }
@@ -44,6 +45,8 @@ int updateLeaderboard(Leaderboard* leaderboard, Score score) {
         leaderboard->scores[position] = score;
         leaderboard->count++;
     }
+
+    return 1;
 }
 
 void destroyLeaderboard(Leaderboard* leaderboard) {
