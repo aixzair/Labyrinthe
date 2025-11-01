@@ -15,4 +15,6 @@ Direction displayGame(const Game* game);
 
 void displayGameOver(const Game* game, const Leaderboard* leaderboard, char playerName[PLAYER_NAME_LENGTH]);
 
+void displayLeaderboard(const char* labyrinthName, const Leaderboard* leaderboard);
+
 #endif

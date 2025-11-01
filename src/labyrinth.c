@@ -25,6 +25,10 @@ int setSquare(const Labyrinth* labyrinth, int line, int col, Square square) {
 }
 
 void destroyLabyrinth(Labyrinth* labyrinth) {
+    if (labyrinth == NULL) {
+        return;
+    }
+
     free(labyrinth->name);
     for (size_t line = 0; line < labyrinth->height; line++) {
         free(labyrinth->squares[line]);
