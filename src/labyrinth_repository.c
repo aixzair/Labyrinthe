@@ -1,12 +1,16 @@
-#include "labyrinth.h"
+#include "labyrinth_repository.h"
 
 #include <stdio.h>
 #include <string.h>
 
+#include "labyrinth.h"
+
 #define PATH_LABYRINTH "labyrinths"
+#define PATH_SCORE "scores"
 #define FILE_PATH_LENGTH 200
 
 static char* getFilePath(const char* fileName);
+static char* getScoreFilePath(const char* fileName);
 
 static char* getFilePath(const char* fileName) {
     char* filePath = malloc(sizeof(char) * FILE_PATH_LENGTH);
@@ -21,6 +25,22 @@ static char* getFilePath(const char* fileName) {
     }
 
     return filePath;
+}
+
+static char* getScoreFilePath(const char* fileName) {
+    char* filePath = malloc(sizeof(char) * FILE_PATH_LENGTH);
+    if (filePath == NULL) {
+        return NULL;
+    }
+
+    if (sprintf(filePath, PATH_SCORE "/%s_score.cfg", fileName) < 0) {
+        free(filePath);
+
+        return NULL;
+    }
+
+    return filePath;
+
 }
 
 int getLabyrinthsNames(char** names, int namesLength, int stringLength) {
@@ -47,7 +67,7 @@ int getLabyrinthsNames(char** names, int namesLength, int stringLength) {
     return count;
 }
 
-Labyrinth* loadLabyrinth(char* fileName) {
+Labyrinth* loadLabyrinth(const char* fileName) {
     Labyrinth* labyrinth = malloc(sizeof(Labyrinth));
     labyrinth->name = malloc(strlen(fileName) + 1);
     strcpy(labyrinth->name, fileName);
@@ -100,6 +120,53 @@ int saveLabyrinth(const char* fileName, const Labyrinth* labyrinth) {
     for (size_t line = 0; line < labyrinth->height; line++) {
         fwrite(labyrinth->squares[line], sizeof(Square), labyrinth->width, file);
     }
+
+    fclose(file);
+    return 1;
+}
+
+// count or -1
+Leaderboard* loadLeaderboard(const char* labyrinthName) {
+    char* path = getScoreFilePath(labyrinthName);
+    if (path == NULL) {
+        return NULL;
+    }
+
+    FILE* file = fopen(path, "rb");
+    free(path);
+    if (file == NULL) {
+        return NULL;
+    }
+
+    Leaderboard* leaderboard = malloc(sizeof(Leaderboard));
+
+    fread(&leaderboard->count, sizeof(int), 1, file);
+    fread(&leaderboard->countMax, sizeof(int), 1, file);
+
+    leaderboard->scores = malloc(sizeof(Score) * leaderboard->countMax);
+    fread(leaderboard->scores, sizeof(Score), leaderboard->count, file);
+
+    fclose(file);
+
+    return leaderboard;
+}
+
+// 1 or 0
+int saveLeaderboard(const char* labyrinthName, const Leaderboard* leaderboard) {
+    char* path = getScoreFilePath(labyrinthName);
+    if (path == NULL) {
+        return 0;
+    }
+
+    FILE* file = fopen(path, "wb");
+    free(path);
+    if (file == NULL) {
+        return 0;
+    }
+
+    fwrite(&leaderboard->count, sizeof(int), 1, file);
+    fwrite(&leaderboard->countMax, sizeof(int), 1, file);
+    fwrite(leaderboard->scores, sizeof(Score), leaderboard->count, file);
 
     fclose(file);
     return 1;

@@ -4,13 +4,13 @@
 
 #define TRAP_MALUS 10
 #define TURN_MALUS 1
-#define COIN_BONUS 10
+#define COIN_BONUS 20
 
 Game* startGame(Labyrinth* labyrinth) {
     Game* game = malloc(sizeof(Game));
 
     game->gameOver = 0;
-    game->score = 100;
+    game->score = (int) (labyrinth->height * labyrinth->width / 4);
     game->playerPosition.x = 0;
     game->playerPosition.y = 0;
     game->labyrinth = labyrinth;
@@ -26,8 +26,6 @@ Game* startGame(Labyrinth* labyrinth) {
 
     return game;
 }
-
-int skdjflsqdjqs = 0;
 
 int move(Game* game, Direction direction) {
     if (game == NULL || game->labyrinth == NULL) {

@@ -63,15 +63,16 @@ Action displayMenu(const Menu* menu) {
     printf("2. Charger un larbyrinthe\n");
     if (playAvailable) {
         printf("3. Jouer\n");
+        printf("4. Classement\n");
     }
-    printf("4. Quiter\n");
+    printf("5. Quiter\n");
 
 
     int choice;
     if (playAvailable) {
-        choice = askForIntInRange(1, 4);
+        choice = askForIntInRange(1, 5);
     } else {
-        int choices[] = {1, 2, 4};
+        int choices[] = {1, 2, 5};
         choice = askForIntInList(choices, 3);
     }
 
@@ -79,6 +80,7 @@ Action displayMenu(const Menu* menu) {
         case 1: return ACT_CREATE;
         case 2: return ACT_LOAD;
         case 3: return ACT_PLAY;
+        case 4: return ACT_SCORE;
         default: return ACT_QUIT;
     }
 }
@@ -131,9 +133,40 @@ Direction displayGame(const Game* game) {
     }
 }
 
-void displayGameOver(const Game* game) {
+void displayGameOver(const Game* game, const Leaderboard* leaderboard, char playerName[PLAYER_NAME_LENGTH]) {
     resetDisplay();
     printf("Partie terminé.\n");
     printf("Score : %d.\n", game->score);
+
+    if (leaderboard->count > 0) {
+        printf("\nClassement :\n");
+        for (int i = 0; i < leaderboard->count; i++) {
+            Score score = leaderboard->scores[i];
+            printf("%2d. %4d : %s\n", i + 1, score.score, score.playerName);
+        }
+    }
+
+    if (playerName == NULL) {
+        fastAskForChar();
+    } else {
+        printf("\nEntrez votre nom :\n");
+        askForString(playerName, PLAYER_NAME_LENGTH);
+    }
+}
+
+void displayLeaderboard(const char* labyrinthName, const Leaderboard* leaderboard) {
+    resetDisplay();
+
+    printf("Labyrinthe : %s\n\n", labyrinthName);
+
+    if (leaderboard == NULL || leaderboard->count == 0) {
+        printf("Aucun score pour ce labyrinthe.\n");
+    } else {
+        for (int i = 0; i < leaderboard->count; i++) {
+            Score score = leaderboard->scores[i];
+            printf("%2d. %4d : %s\n", i + 1, score.score, score.playerName);
+        }
+    }
+
     fastAskForChar();
 }
