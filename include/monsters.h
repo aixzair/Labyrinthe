@@ -8,7 +8,7 @@
 
 typedef struct Monster {
     Position position;
-    void (*move)(struct Monster* self);
+    void (*move)(struct Monster* self, Labyrinth* labyrinth, int penality);
     void (*destroy)(struct Monster* self);
 } Monster;
 
@@ -26,8 +26,6 @@ typedef struct {
 typedef struct {
     size_t count;
     Monster** monsters;
-
-    int monstersHits;
     int penalityCount;
 } Monsters;
 
