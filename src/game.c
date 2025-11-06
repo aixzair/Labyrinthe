@@ -4,6 +4,7 @@
 
 #define TRAP_MALUS 10
 #define TURN_MALUS 1
+#define MONSTER_MALUS 30
 #define COIN_BONUS 20
 
 Game* startGame(Labyrinth* labyrinth) {
@@ -14,6 +15,12 @@ Game* startGame(Labyrinth* labyrinth) {
     game->playerPosition.x = 0;
     game->playerPosition.y = 0;
     game->labyrinth = labyrinth;
+
+    if (labyrinth->monsters) {
+        game->monsters = getMonsters(labyrinth);
+    } else {
+        game->monsters = NULL;
+    }
 
     for (size_t line = 0; line < labyrinth->height; line++) {
         for (size_t col = 0; col < labyrinth->width; col++) {
@@ -63,6 +70,12 @@ int move(Game* game, Direction direction) {
     }
 
     char square = getSquare(game->labyrinth, newPosition.y, newPosition.x);
+    if (square == SQU_WALL) {
+        return 0;
+    }
+
+    // Le joueur bouge forcément
+    moveMonsters(game->labyrinth, game->monsters);
 
     switch (square) {
         case SQU_CORRIDOR:
@@ -86,6 +99,7 @@ int move(Game* game, Direction direction) {
             }
             break;
         default:
+            // NOTE : impossible
             return 0;
     }
 
@@ -103,4 +117,11 @@ int move(Game* game, Direction direction) {
 
 int isGameOver(Game* game) {
     return game->gameOver;
+}
+
+void endGame(Game* game){
+    if (game->monsters != NULL) {
+        destroyMonsters(game->monsters);
+    }
+    free(game);
 }

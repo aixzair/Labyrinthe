@@ -7,7 +7,9 @@
 
 Action displayMenu(const Menu* menu);
 
-void displayLabyrinthGenerationForm(size_t* height, size_t* width, char* name, size_t nameLength);
+void displayLabyrinthGenerationForm(
+    size_t* height, size_t* width, char* name, size_t nameLength, int* monsters
+);
 
 int displayLabyrintsAvailable(char** names, int count);
 

@@ -29,6 +29,7 @@ typedef struct {
     size_t height;
     size_t width;
     Square** squares;
+    int monsters;
 } Labyrinth;
 
 int isValidSquare(const Labyrinth* labyrinth, int line, int col);

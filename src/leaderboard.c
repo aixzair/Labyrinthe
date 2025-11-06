@@ -54,4 +54,5 @@ void destroyLeaderboard(Leaderboard* leaderboard) {
     leaderboard->countMax = -1;
     free(leaderboard->scores);
     leaderboard->scores = NULL;
+    free(leaderboard);
 }

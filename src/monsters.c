@@ -1,6 +1,7 @@
 #include "monsters.h"
 
 #include <stdlib.h>
+#include <time.h>
 
 static int randomInt(int min, int max);
 
@@ -34,7 +35,7 @@ static int randomInt(int min, int max) {
 static Spectrum* createSpectrum(int line, int col) {
     Spectrum* spectrum = malloc(sizeof(Spectrum));
 
-    spectrum->base.move = NULL; // TODO
+    spectrum->base.move = moveSpectrum;
     spectrum->base.destroy = destroySpectrum;
     spectrum->base.position.y = line;
     spectrum->base.position.x = col;
@@ -55,7 +56,7 @@ static void destroySpectrum(Monster* monster) {
 static Ogre* createOgre(int line, int col, const Labyrinth* labyrinth) {
     Ogre* ogre = malloc(sizeof(Ogre));
 
-    ogre->base.move = NULL; // TODO
+    ogre->base.move = moveOgre;
     ogre->base.destroy = destroyOgre;
     ogre->base.position.y = line;
     ogre->base.position.x = col;
@@ -250,13 +251,13 @@ static void moveOgre(Monster* monster, Labyrinth* labyrinth, int penality) {
                         labyrinth,
                         newPosition.y,
                         newPosition.x, 
-                        newSpectrumPosition(newSquare)
+                        newOgrePosition(newSquare)
                     );
                     setSquare(
                         labyrinth,
                         monster->position.y,
                         monster->position.x,
-                        lastSpectrumPosition(lastSquare)
+                        lastOgrePosition(lastSquare)
                     );
                     monster->position = newPosition;
                     success = 1;
@@ -332,7 +333,7 @@ Monsters* getMonsters(const Labyrinth* labyrinth) {
     Monsters* monsters = malloc(sizeof(Monsters));
     monsters->penalityCount = 0;
 
-    int maxCount = 10;
+    size_t maxCount = 10;
     monsters->count = 0;
     monsters->monsters = malloc(sizeof(Monster*) * maxCount);
 
@@ -340,7 +341,7 @@ Monsters* getMonsters(const Labyrinth* labyrinth) {
         for (size_t col = 0; col < labyrinth->width; col++) {
             if (monsters->count == maxCount) {
                 maxCount *= 2;
-                monsters->monsters = realloc(monsters->count, sizeof(Monster*) * maxCount);
+                monsters->monsters = realloc(monsters->monsters, sizeof(Monster*) * maxCount);
             }
 
             switch (getSquare(labyrinth, line, col)) {
@@ -368,7 +369,11 @@ Monsters* getMonsters(const Labyrinth* labyrinth) {
     return monsters;
 }
 
-void moveMonsters(Labyrinth* labyrinth, Monsters* monsters);
+void moveMonsters(Labyrinth* labyrinth, Monsters* monsters) {
+    for (size_t i = 0; i < monsters->count; i++) {
+        monsters->monsters[i]->move(monsters->monsters[i], labyrinth, monsters->penalityCount);
+    }
+}
 
 void destroyMonsters(Monsters* monsters) {
     for (size_t i = 0; i < monsters->count; i++) {

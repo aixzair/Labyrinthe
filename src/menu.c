@@ -9,6 +9,7 @@
 #include "labyrinth_repository.h"
 #include "leaderboard.h"
 #include "user_interface.h"
+#include "monsters.h"
 
 #define LABYRINTH_NAME_LENGTH 40
 #define LABYRINTH_COUNT_MAX 100
@@ -48,7 +49,8 @@ void createLabyrinthAction(Menu* menu) {
     size_t height;
     size_t width;
     char* name = malloc(LABYRINTH_NAME_LENGTH * sizeof(char));
-    displayLabyrinthGenerationForm(&height, &width, name, LABYRINTH_NAME_LENGTH);
+    int monsters;
+    displayLabyrinthGenerationForm(&height, &width, name, LABYRINTH_NAME_LENGTH, &monsters);
 
     // Génération et svg du labyrinthe
     Labyrinth* labyrinth = generateLabyrinth(height, width);
@@ -56,6 +58,10 @@ void createLabyrinthAction(Menu* menu) {
 
     addObjectsInLabyrinth(labyrinth);
     labyrinth->name = name;
+
+    if (monsters) {
+        addMonsters(labyrinth);
+    }
 
     saveLabyrinth(name, labyrinth);
 
@@ -138,7 +144,7 @@ void playGameAction(Menu* menu) {
     }
 
     destroyLeaderboard(leaderboard);
-    free(game);
+    endGame(game);
 
     // Recharge le labyrinthe
     Labyrinth* new = loadLabyrinth(menu->labyrinth->name);
