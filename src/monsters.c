@@ -20,6 +20,10 @@ static Square newSpectrumPosition(Square square);
 
 static void moveOgre(Monster* monster, Labyrinth* labyrinth, int penality);
 
+static Square lastOgrePosition(Square square);
+
+static Square newOgrePosition(Square square);
+
 
 static int randomInt(int min, int max) {
     int range = max - min + 1;
@@ -163,7 +167,28 @@ static Square newSpectrumPosition(Square square) {
         case SQU_KEY: return SQU_SPECTRUM_IN_KEY;
         case SQU_TRAP: return SQU_SPECTRUM_IN_TRAP;
         case SQU_WALL: return SQU_SPECTRUM_IN_WALL;
-        default: return SQU_WALL;
+        default: return SQU_NULL;
+    }
+}
+
+static Square lastOgrePosition(Square square) {
+    switch (square) {
+        case SQU_OGRE: return SQU_CORRIDOR;
+        case SQU_OGRE_IN_COIN: return SQU_COIN;
+        case SQU_OGRE_IN_KEY: return SQU_KEY;
+        case SQU_OGRE_IN_TRAP: return SQU_TRAP;
+        default: return SQU_NULL;
+    }
+}
+
+static Square newOgrePosition(Square square) {
+    switch (square) {
+        case SQU_CORRIDOR: return SQU_SPECTRUM;
+        case SQU_COIN: return SQU_SPECTRUM_IN_COIN;
+        case SQU_KEY: return SQU_SPECTRUM_IN_KEY;
+        case SQU_TRAP: return SQU_SPECTRUM_IN_TRAP;
+        case SQU_WALL: return SQU_SPECTRUM_IN_WALL;
+        default: return SQU_NULL;
     }
 }
 
@@ -171,15 +196,74 @@ static void moveOgre(Monster* monster, Labyrinth* labyrinth, int penality) {
     Ogre* ogre = (Ogre*) monster;
     ogre->distance = 3 * penality + 1;
 
-    // Récupère la direction
-    Position newPosition;
+    // Vérifie si il est dans la zone
+    int checkX = ogre->coin.x - ogre->distance < ogre->base.position.x
+        && ogre->coin.x + ogre->distance > ogre->base.position.x;
 
-    if (
-        
-    ) {
-        // Si il est dans sa zone
-    } else {
-        // Si il est hors de sa zone
+    int checkY = ogre->coin.y - ogre->distance < ogre->base.position.y
+        && ogre->coin.y + ogre->distance > ogre->base.position.y;
+
+    int direction = 0;
+    int success = 0;
+
+    for (int try = 0; try < 100 && !success; try++) {
+        if (checkX && checkY) {
+            direction = randomInt(1, 4);
+        } else if (direction < 4) {
+            direction++;
+        } else {
+            direction = randomInt(1, 4);
+        }
+
+        // Récupère la direction
+        Position newPosition;
+        switch (direction) {
+            case 1:
+                newPosition.x = monster->position.x + 1;
+                newPosition.y = monster->position.y;
+                break;
+            case 2:
+                newPosition.x = monster->position.x - 1;
+                newPosition.y = monster->position.y;
+                break;
+            case 3:
+                newPosition.x = monster->position.x;
+                newPosition.y = monster->position.y + 1;
+                break;
+            default:
+                newPosition.x = monster->position.x;
+                newPosition.y = monster->position.y - 1;
+        }
+
+
+        // Se déplace
+        Square newSquare = getSquare(labyrinth, newPosition.y, newPosition.x);
+        Square lastSquare = getSquare(labyrinth, monster->position.y, monster->position.x);
+
+        switch (newSquare) {
+            case SQU_CORRIDOR:
+            case SQU_WALL:
+            case SQU_COIN:
+            case SQU_TRAP:
+            case SQU_KEY:
+                    setSquare(
+                        labyrinth,
+                        newPosition.y,
+                        newPosition.x, 
+                        newSpectrumPosition(newSquare)
+                    );
+                    setSquare(
+                        labyrinth,
+                        monster->position.y,
+                        monster->position.x,
+                        lastSpectrumPosition(lastSquare)
+                    );
+                    monster->position = newPosition;
+                    success = 1;
+                break;
+            default:
+                continue;
+        }
     }
 }
 
