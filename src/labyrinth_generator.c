@@ -182,6 +182,7 @@ static Labyrinth* newLabyrinthFromMatrice(Matrice matrice) {
     labyrinth->name = NULL;
     labyrinth->height = matrice.lines;
     labyrinth->width = matrice.cols;
+    labyrinth->monsters = 0;
 
     labyrinth->squares = (Square**) malloc(matrice.lines * sizeof(Square*));
     for (size_t line = 0; line < matrice.lines; line++) {

@@ -2,6 +2,8 @@
 #define GAME_H
 
 #include "labyrinth.h"
+#include "position.h"
+#include "monsters.h"
 
 typedef enum {
     DIR_UP,
@@ -11,15 +13,11 @@ typedef enum {
 } Direction;
 
 typedef struct {
-    int x;
-    int y;
-} Position;
-
-typedef struct {
     int score;
     int gameOver;
     Position playerPosition;
     Labyrinth* labyrinth;
+    Monsters* monsters;
 } Game;
 
 Game* startGame(Labyrinth* labyrinth);
@@ -27,5 +25,7 @@ Game* startGame(Labyrinth* labyrinth);
 int move(Game* game, Direction direction);
 
 int isGameOver(Game* game);
+
+void endGame(Game* game);
 
 #endif

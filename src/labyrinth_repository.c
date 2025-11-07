@@ -33,7 +33,7 @@ static char* getScoreFilePath(const char* fileName) {
         return NULL;
     }
 
-    if (sprintf(filePath, PATH_SCORE "/%s_score.cfg", fileName) < 0) {
+    if (sprintf(filePath, PATH_SCORE "/%s_score.score", fileName) < 0) {
         free(filePath);
 
         return NULL;
@@ -85,6 +85,7 @@ Labyrinth* loadLabyrinth(const char* fileName) {
         return NULL;
     }
 
+    fread(&labyrinth->monsters, sizeof(int), 1, file);
     fread(&labyrinth->height, sizeof(size_t), 1, file);
     fread(&labyrinth->width, sizeof(size_t), 1, file);
 
@@ -114,6 +115,7 @@ int saveLabyrinth(const char* fileName, const Labyrinth* labyrinth) {
         return 0;
     }
 
+    fwrite(&labyrinth->monsters, sizeof(int), 1, file);
     fwrite(&labyrinth->height, sizeof(size_t), 1, file);
     fwrite(&labyrinth->width, sizeof(size_t), 1, file);
 

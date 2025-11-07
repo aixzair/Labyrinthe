@@ -25,15 +25,26 @@ static char getLabyrinthChar(Square square) {
     switch (square) {
         case SQU_PLAYER: return 'o';
         case SQU_CORRIDOR: return ' ';
-        case SQU_END: return '-';
+        case SQU_WALL: return '#';
+        case SQU_END: return ' ';
 
         case SQU_DOOR: return 'D';
         case SQU_KEY: return 'k';
-        case SQU_COIN: return '*';
+        case SQU_COIN: return '$';
         case SQU_TRAP: return '^';
 
-        // NOTE : SQU_WALL
-        default: return '#';
+        case SQU_OGRE:
+        case SQU_OGRE_IN_COIN:
+        case SQU_OGRE_IN_KEY:
+        case SQU_OGRE_IN_TRAP: return 'G';
+
+        case SQU_SPECTRUM:
+        case SQU_SPECTRUM_IN_COIN:
+        case SQU_SPECTRUM_IN_KEY:
+        case SQU_SPECTRUM_IN_TRAP:
+        case SQU_SPECTRUM_IN_WALL: return 'S';
+
+        default: return '?';
     }
 }
 
@@ -85,7 +96,9 @@ Action displayMenu(const Menu* menu) {
     }
 }
 
-void displayLabyrinthGenerationForm(size_t* height, size_t* width, char* name, size_t nameLength) {
+void displayLabyrinthGenerationForm(
+    size_t* height, size_t* width, char* name, size_t nameLength, int* monsters
+) {
     resetDisplay();
 
     printf("Création d'un labyrinthe\n");
@@ -102,6 +115,9 @@ void displayLabyrinthGenerationForm(size_t* height, size_t* width, char* name, s
 
     printf("Nom du labyrinthe, max 40 caractères\n");
     askForString(name, nameLength);
+
+    printf("Monstres (1 : oui, 0, non) :\n");
+    *monsters = askForIntInRange(0, 1);
 }
 
 int displayLabyrintsAvailable(char** names, int count) {
