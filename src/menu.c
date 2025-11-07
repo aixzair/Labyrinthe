@@ -61,6 +61,7 @@ void createLabyrinthAction(Menu* menu) {
 
     if (monsters) {
         addMonsters(labyrinth);
+        labyrinth->monsters = 1;
     }
 
     saveLabyrinth(name, labyrinth);
@@ -156,4 +157,6 @@ void showScoresActoin(Menu* menu) {
     Leaderboard* leaderboard = loadLeaderboard(menu->labyrinth->name);
     
     displayLeaderboard(menu->labyrinth->name, leaderboard);
+
+    destroyLeaderboard(leaderboard);
 }

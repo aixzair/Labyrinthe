@@ -9,7 +9,7 @@ static Spectrum* createSpectrum(int line, int col);
 
 static void destroySpectrum(Monster* monster);
 
-static Ogre* createOgre(int line, int col, const Labyrinth* labyrinth);
+static Ogre* createOgre(int line, int col);
 
 static void destroyOgre(Monster* monster);
 
@@ -53,7 +53,7 @@ static void destroySpectrum(Monster* monster) {
     spectrum = NULL;
 }
 
-static Ogre* createOgre(int line, int col, const Labyrinth* labyrinth) {
+static Ogre* createOgre(int line, int col) {
     Ogre* ogre = malloc(sizeof(Ogre));
 
     ogre->base.move = moveOgre;
@@ -62,21 +62,8 @@ static Ogre* createOgre(int line, int col, const Labyrinth* labyrinth) {
     ogre->base.position.x = col;
 
     ogre->distance = 3;
-
-    int success = 0;
-    while (!success) {
-        size_t coinLine = randomInt(1, labyrinth->height - 2);
-        size_t coinCol = randomInt(1, labyrinth->width - 2);
-
-        if (getSquare(labyrinth, coinLine, col) != SQU_COIN) {
-            continue;
-        }
-
-        ogre->coin.y = coinLine;
-        ogre->coin.x = coinCol;
-
-        success = 1;
-    }
+    ogre->coin.y = line;
+    ogre->coin.x = col;
 
     return ogre;
 }
@@ -94,22 +81,23 @@ static void moveSpectrum(Monster* monster, Labyrinth* labyrinth, int penality) {
     spectrum->speed = penality / 5 + 1;
     
     for (int i = 0; i < spectrum->speed; i++) {
-        int success = 0;
-        do {
-            int direction = randomInt(1, 4);
+
+        int direction = randomInt(0, 3);
+        for (int try = 0; try < 4; try++) {
+            direction = (direction + 1) % 4;
 
             // Nouvelle position
             Position newPosition;
             switch (direction) {
-                case 1:
+                case 0:
                     newPosition.x = monster->position.x + 1;
                     newPosition.y = monster->position.y;
                     break;
-                case 2:
+                case 1:
                     newPosition.x = monster->position.x - 1;
                     newPosition.y = monster->position.y;
                     break;
-                case 3:
+                case 2:
                     newPosition.x = monster->position.x;
                     newPosition.y = monster->position.y + 1;
                     break;
@@ -141,12 +129,11 @@ static void moveSpectrum(Monster* monster, Labyrinth* labyrinth, int penality) {
                             lastSpectrumPosition(lastSquare)
                         );
                         monster->position = newPosition;
-                        success = 1;
                     break;
                 default:
                     continue;
             }
-        } while (!success);
+        }
     }
 }
 
@@ -184,11 +171,10 @@ static Square lastOgrePosition(Square square) {
 
 static Square newOgrePosition(Square square) {
     switch (square) {
-        case SQU_CORRIDOR: return SQU_SPECTRUM;
-        case SQU_COIN: return SQU_SPECTRUM_IN_COIN;
-        case SQU_KEY: return SQU_SPECTRUM_IN_KEY;
-        case SQU_TRAP: return SQU_SPECTRUM_IN_TRAP;
-        case SQU_WALL: return SQU_SPECTRUM_IN_WALL;
+        case SQU_CORRIDOR: return SQU_OGRE;
+        case SQU_COIN: return SQU_OGRE_IN_COIN;
+        case SQU_KEY: return SQU_OGRE_IN_KEY;
+        case SQU_TRAP: return SQU_OGRE_IN_TRAP;
         default: return SQU_NULL;
     }
 }
@@ -298,11 +284,11 @@ void addMonsters(Labyrinth* labyrinth) {
             int line = randomInt(1, labyrinth->height - 2);
             int col = randomInt(1, labyrinth->width - 2);
 
-            if (getSquare(labyrinth, line, col) != SQU_CORRIDOR) {
+            if (getSquare(labyrinth, line, col) != SQU_COIN) {
                 continue;
             }
 
-            success = setSquare(labyrinth, line, col, SQU_OGRE);
+            success = setSquare(labyrinth, line, col, SQU_OGRE_IN_COIN);
         } while (!success);
     }
 
@@ -345,11 +331,8 @@ Monsters* getMonsters(const Labyrinth* labyrinth) {
             }
 
             switch (getSquare(labyrinth, line, col)) {
-                case SQU_OGRE:
                 case SQU_OGRE_IN_COIN:
-                case SQU_OGRE_IN_TRAP:
-                case SQU_OGRE_IN_KEY:
-                    monsters->monsters[monsters->count] = (Monster*) createOgre(line, col, labyrinth);
+                    monsters->monsters[monsters->count] = (Monster*) createOgre(line, col);
                     monsters->count++;
                     break;
                 case SQU_SPECTRUM:
@@ -371,7 +354,8 @@ Monsters* getMonsters(const Labyrinth* labyrinth) {
 
 void moveMonsters(Labyrinth* labyrinth, Monsters* monsters) {
     for (size_t i = 0; i < monsters->count; i++) {
-        monsters->monsters[i]->move(monsters->monsters[i], labyrinth, monsters->penalityCount);
+        Monster* monster = monsters->monsters[i];
+        monster->move(monster, labyrinth, monsters->penalityCount);
     }
 }
 

@@ -116,7 +116,7 @@ void displayLabyrinthGenerationForm(
     printf("Nom du labyrinthe, max 40 caractères\n");
     askForString(name, nameLength);
 
-    printf("Monstres (1 : oui, 0, non) :");
+    printf("Monstres (1 : oui, 0, non) :\n");
     *monsters = askForIntInRange(0, 1);
 }
 

@@ -75,7 +75,9 @@ int move(Game* game, Direction direction) {
     }
 
     // Le joueur bouge forcément
-    moveMonsters(game->labyrinth, game->monsters);
+    if (game->monsters) {
+        moveMonsters(game->labyrinth, game->monsters);
+    }
 
     switch (square) {
         case SQU_CORRIDOR:
