@@ -25,6 +25,7 @@ static char getLabyrinthChar(Square square) {
     switch (square) {
         case SQU_PLAYER: return 'o';
         case SQU_CORRIDOR: return ' ';
+        case SQU_WALL: return '#';
         case SQU_END: return ' ';
 
         case SQU_DOOR: return 'D';
@@ -43,8 +44,7 @@ static char getLabyrinthChar(Square square) {
         case SQU_SPECTRUM_IN_TRAP:
         case SQU_SPECTRUM_IN_WALL: return 'S';
 
-        // NOTE : SQU_WALL
-        default: return '#';
+        default: return '?';
     }
 }
 

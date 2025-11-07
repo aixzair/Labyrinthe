@@ -34,6 +34,10 @@ void addMonsters(Labyrinth* labyrinth);
 
 Monsters* getMonsters(const Labyrinth* labyrinth);
 
+int isMonster(const Labyrinth* labyrinth, Position position);
+
+void killMonster(Monsters* monsters, Position position);
+
 void moveMonsters(Labyrinth* labyrinth, Monsters* monsters);
 
 void destroyMonsters(Monsters* monsters);

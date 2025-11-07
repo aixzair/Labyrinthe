@@ -43,6 +43,7 @@ int move(Game* game, Direction direction) {
         return 0;
     }
 
+    // Récupère la nouvelle psosition
     Position newPosition;
     switch (direction) {
         case DIR_UP:
@@ -74,12 +75,17 @@ int move(Game* game, Direction direction) {
         return 0;
     }
 
-    // Le joueur bouge forcément
+    // Met à jour le score
+    // NOTE : Le joueur bouge forcément
     if (game->monsters) {
         moveMonsters(game->labyrinth, game->monsters);
     }
 
     switch (square) {
+        case SQU_NULL:
+        case SQU_WALL:
+        case SQU_DOOR:
+            return 0;
         case SQU_CORRIDOR:
             break;
         case SQU_END:
@@ -92,6 +98,8 @@ int move(Game* game, Direction direction) {
             game->score -= TRAP_MALUS;
             break;
         case SQU_KEY:
+        case SQU_SPECTRUM_IN_KEY:
+        case SQU_OGRE_IN_KEY:
             for (size_t line = 0; line < game->labyrinth->height; line++) {
                 for (size_t col = 0; col < game->labyrinth->width; col++) {
                     if (getSquare(game->labyrinth, line, col) == SQU_DOOR) {
@@ -100,18 +108,18 @@ int move(Game* game, Direction direction) {
                 }
             }
             break;
-        default:
-            // NOTE : impossible
-            return 0;
+    }
+
+    if (isMonster(game->labyrinth, newPosition)) {
+        killMonster(game->monsters, newPosition);
+        game->score -= MONSTER_MALUS;
     }
 
     game->score -= TURN_MALUS;
 
+    // Déplace le joueur
     setSquare(game->labyrinth, game->playerPosition.y, game->playerPosition.x, SQU_CORRIDOR);
-
-    game->playerPosition.x = newPosition.x;
-    game->playerPosition.y = newPosition.y;
-
+    game->playerPosition = newPosition;
     setSquare(game->labyrinth, game->playerPosition.y, game->playerPosition.x, SQU_PLAYER);
 
     return 1;

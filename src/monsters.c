@@ -3,6 +3,13 @@
 #include <stdlib.h>
 #include <time.h>
 
+typedef enum {
+    DIR_UP = 0,
+    DIR_DOWN = 1,
+    DIR_LEFT = 2,
+    DIR_RIGHT = 3
+} Direction;
+
 static int randomInt(int min, int max);
 
 static Spectrum* createSpectrum(int line, int col);
@@ -15,16 +22,17 @@ static void destroyOgre(Monster* monster);
 
 static void moveSpectrum(Monster* monster, Labyrinth* labyrinth, int penality);
 
-static Square lastSpectrumPosition(Square square);
+static Square lastSpectrumSquare(Square square);
 
-static Square newSpectrumPosition(Square square);
+static Square newSpectrumSquare(Square square);
 
 static void moveOgre(Monster* monster, Labyrinth* labyrinth, int penality);
 
-static Square lastOgrePosition(Square square);
+static Square lastOgreSquare(Square square);
 
-static Square newOgrePosition(Square square);
+static Square newOgreSquare(Square square);
 
+static Position nextPosition(Position position, Direction direction);
 
 static int randomInt(int min, int max) {
     int range = max - min + 1;
@@ -81,63 +89,40 @@ static void moveSpectrum(Monster* monster, Labyrinth* labyrinth, int penality) {
     spectrum->speed = penality / 5 + 1;
     
     for (int i = 0; i < spectrum->speed; i++) {
+        Position newPosition;
+        Square newSquare;
+        Square lastSquare;
 
+        // Nouvelle position
         int direction = randomInt(0, 3);
         for (int try = 0; try < 4; try++) {
+            newPosition = nextPosition(monster->position, direction);
+            newSquare = newSpectrumSquare(getSquare(
+                labyrinth, newPosition.y, newPosition.x
+            ));
+            lastSquare = lastSpectrumSquare(getSquare(
+                labyrinth, monster->position.y, monster->position.x
+            ));
+
+            if (newSquare != SQU_NULL) {
+                break;
+            }
+            
             direction = (direction + 1) % 4;
-
-            // Nouvelle position
-            Position newPosition;
-            switch (direction) {
-                case 0:
-                    newPosition.x = monster->position.x + 1;
-                    newPosition.y = monster->position.y;
-                    break;
-                case 1:
-                    newPosition.x = monster->position.x - 1;
-                    newPosition.y = monster->position.y;
-                    break;
-                case 2:
-                    newPosition.x = monster->position.x;
-                    newPosition.y = monster->position.y + 1;
-                    break;
-                default:
-                    newPosition.x = monster->position.x;
-                    newPosition.y = monster->position.y - 1;
-            }
-
-            // Se déplace
-            Square newSquare = getSquare(labyrinth, newPosition.y, newPosition.x);
-            Square lastSquare = getSquare(labyrinth, monster->position.y, monster->position.x);
-
-            switch (newSquare) {
-                case SQU_CORRIDOR:
-                case SQU_WALL:
-                case SQU_COIN:
-                case SQU_TRAP:
-                case SQU_KEY:
-                        setSquare(
-                            labyrinth,
-                            newPosition.y,
-                            newPosition.x, 
-                            newSpectrumPosition(newSquare)
-                        );
-                        setSquare(
-                            labyrinth,
-                            monster->position.y,
-                            monster->position.x,
-                            lastSpectrumPosition(lastSquare)
-                        );
-                        monster->position = newPosition;
-                    break;
-                default:
-                    continue;
-            }
         }
+
+        // Se déplace
+        setSquare(
+            labyrinth, newPosition.y, newPosition.x, newSquare
+        );
+        setSquare(
+            labyrinth, monster->position.y, monster->position.x, lastSquare
+        );
+        monster->position = newPosition;
     }
 }
 
-static Square lastSpectrumPosition(Square square) {
+static Square lastSpectrumSquare(Square square) {
     switch (square) {
         case SQU_SPECTRUM: return SQU_CORRIDOR;
         case SQU_SPECTRUM_IN_COIN: return SQU_COIN;
@@ -148,7 +133,7 @@ static Square lastSpectrumPosition(Square square) {
     }
 }
 
-static Square newSpectrumPosition(Square square) {
+static Square newSpectrumSquare(Square square) {
     switch (square) {
         case SQU_CORRIDOR: return SQU_SPECTRUM;
         case SQU_COIN: return SQU_SPECTRUM_IN_COIN;
@@ -159,7 +144,7 @@ static Square newSpectrumPosition(Square square) {
     }
 }
 
-static Square lastOgrePosition(Square square) {
+static Square lastOgreSquare(Square square) {
     switch (square) {
         case SQU_OGRE: return SQU_CORRIDOR;
         case SQU_OGRE_IN_COIN: return SQU_COIN;
@@ -169,7 +154,7 @@ static Square lastOgrePosition(Square square) {
     }
 }
 
-static Square newOgrePosition(Square square) {
+static Square newOgreSquare(Square square) {
     switch (square) {
         case SQU_CORRIDOR: return SQU_OGRE;
         case SQU_COIN: return SQU_OGRE_IN_COIN;
@@ -184,74 +169,71 @@ static void moveOgre(Monster* monster, Labyrinth* labyrinth, int penality) {
     ogre->distance = 3 * penality + 1;
 
     // Vérifie si il est dans la zone
-    int checkX = ogre->coin.x - ogre->distance < ogre->base.position.x
-        && ogre->coin.x + ogre->distance > ogre->base.position.x;
-
-    int checkY = ogre->coin.y - ogre->distance < ogre->base.position.y
-        && ogre->coin.y + ogre->distance > ogre->base.position.y;
-
-    int direction = 0;
-    int success = 0;
-
-    for (int try = 0; try < 100 && !success; try++) {
-        if (checkX && checkY) {
-            direction = randomInt(1, 4);
-        } else if (direction < 4) {
-            direction++;
-        } else {
-            direction = randomInt(1, 4);
-        }
-
-        // Récupère la direction
-        Position newPosition;
-        switch (direction) {
-            case 1:
-                newPosition.x = monster->position.x + 1;
-                newPosition.y = monster->position.y;
-                break;
-            case 2:
-                newPosition.x = monster->position.x - 1;
-                newPosition.y = monster->position.y;
-                break;
-            case 3:
-                newPosition.x = monster->position.x;
-                newPosition.y = monster->position.y + 1;
-                break;
-            default:
-                newPosition.x = monster->position.x;
-                newPosition.y = monster->position.y - 1;
-        }
-
-
-        // Se déplace
-        Square newSquare = getSquare(labyrinth, newPosition.y, newPosition.x);
-        Square lastSquare = getSquare(labyrinth, monster->position.y, monster->position.x);
-
-        switch (newSquare) {
-            case SQU_CORRIDOR:
-            case SQU_WALL:
-            case SQU_COIN:
-            case SQU_TRAP:
-            case SQU_KEY:
-                    setSquare(
-                        labyrinth,
-                        newPosition.y,
-                        newPosition.x, 
-                        newOgrePosition(newSquare)
-                    );
-                    setSquare(
-                        labyrinth,
-                        monster->position.y,
-                        monster->position.x,
-                        lastOgrePosition(lastSquare)
-                    );
-                    monster->position = newPosition;
-                    success = 1;
-                break;
-            default:
-                continue;
-        }
+    Direction direction;
+    if (monster->position.x < ogre->coin.x - ogre->distance) {
+        direction = DIR_RIGHT; 
+    } else if (monster->position.y > ogre->coin.y + ogre->distance) {
+        direction = DIR_UP;
+    } else if (monster->position.x > ogre->coin.x + ogre->distance) {
+        direction = DIR_LEFT;
+    } else if (monster->position.y < ogre->coin.y - ogre->distance) {
+        direction = DIR_DOWN;
+    } else {
+        direction = randomInt(0, 3);
     }
+
+    // Nouvel position
+    Position newPosition;
+    Square newSquare;
+    Square lastSquare;
+
+    for (int try = 0; try < 4; try++) {
+        newPosition = nextPosition(monster->position, direction);
+        newSquare = newOgreSquare(getSquare(
+            labyrinth, newPosition.y, newPosition.x
+        ));
+        lastSquare = lastOgreSquare(getSquare(
+            labyrinth, monster->position.y, monster->position.x
+        ));
+
+        if (newSquare != SQU_NULL) {
+            break;
+        }
+        
+        direction = (direction + 1) % 4;
+    }
+
+    // Se déplace
+    setSquare(
+        labyrinth, newPosition.y, newPosition.x, newSquare
+    );
+    setSquare(
+        labyrinth, monster->position.y, monster->position.x, lastSquare
+    );
+    monster->position = newPosition;
+}
+
+static Position nextPosition(Position position, Direction direction) {
+    Position newPosition;
+    switch (direction) {
+        case DIR_RIGHT:
+            newPosition.x = position.x + 1;
+            newPosition.y = position.y;
+            break;
+        case DIR_LEFT:
+            newPosition.x = position.x - 1;
+            newPosition.y = position.y;
+            break;
+        case DIR_UP:
+            newPosition.x = position.x;
+            newPosition.y = position.y + 1;
+            break;
+        default:
+            newPosition.x = position.x;
+            newPosition.y = position.y - 1;
+    }
+
+    return newPosition;
 }
 
 
@@ -369,4 +351,45 @@ void destroyMonsters(Monsters* monsters) {
     monsters->monsters = NULL;
 
     free(monsters);
+}
+
+void killMonster(Monsters* monsters, Position position) {
+    // Trouve le monstre
+    size_t monsterIndex;
+    for (monsterIndex = 0; monsterIndex < monsters->count; monsterIndex++) {
+        Position otherPosition = monsters->monsters[monsterIndex]->position;
+        if (otherPosition.x == position.x && otherPosition.y == position.y) {
+            break;
+        }
+    }
+
+    if (monsterIndex == monsters->count) {
+        return;
+    }
+
+    // Supprime le monstre
+    monsters->monsters[monsterIndex]->destroy(monsters->monsters[monsterIndex]);
+    if (monsterIndex != monsters->count - 1) {
+        monsters->monsters[monsterIndex] = monsters->monsters[monsters->count - 1];
+    }
+    monsters->count--;
+}
+
+int isMonster(const Labyrinth* labyrinth, Position position) {
+    Square square = getSquare(labyrinth, position.y, position.x);
+
+    switch (square) {
+        case SQU_OGRE:
+        case SQU_OGRE_IN_COIN:
+        case SQU_OGRE_IN_KEY:
+        case SQU_OGRE_IN_TRAP:
+        case SQU_SPECTRUM:
+        case SQU_SPECTRUM_IN_COIN:
+        case SQU_SPECTRUM_IN_KEY:
+        case SQU_SPECTRUM_IN_TRAP:
+        case SQU_SPECTRUM_IN_WALL:
+            return 1;
+        default:
+            return 0;
+    }
 }
