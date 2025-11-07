@@ -71,8 +71,12 @@ int move(Game* game, Direction direction) {
     }
 
     char square = getSquare(game->labyrinth, newPosition.y, newPosition.x);
-    if (square == SQU_WALL) {
-        return 0;
+    switch (square) {
+        case SQU_NULL:
+        case SQU_DOOR:
+        case SQU_WALL:
+        case SQU_SPECTRUM_IN_WALL:
+            return 0;
     }
 
     // Met à jour le score
@@ -82,10 +86,6 @@ int move(Game* game, Direction direction) {
     }
 
     switch (square) {
-        case SQU_NULL:
-        case SQU_WALL:
-        case SQU_DOOR:
-            return 0;
         case SQU_CORRIDOR:
             break;
         case SQU_END:

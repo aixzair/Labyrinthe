@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define MAX_TRY 4
+
 typedef enum {
     DIR_UP = 0,
     DIR_DOWN = 1,
@@ -95,7 +97,9 @@ static void moveSpectrum(Monster* monster, Labyrinth* labyrinth, int penality) {
 
         // Nouvelle position
         int direction = randomInt(0, 3);
-        for (int try = 0; try < 4; try++) {
+
+        int try;
+        for (try = 0; try < MAX_TRY; try++) {
             newPosition = nextPosition(monster->position, direction);
             newSquare = newSpectrumSquare(getSquare(
                 labyrinth, newPosition.y, newPosition.x
@@ -104,11 +108,15 @@ static void moveSpectrum(Monster* monster, Labyrinth* labyrinth, int penality) {
                 labyrinth, monster->position.y, monster->position.x
             ));
 
-            if (newSquare != SQU_NULL) {
+            if (newSquare != SQU_NULL && lastSquare != SQU_NULL) {
                 break;
             }
             
             direction = (direction + 1) % 4;
+        }
+
+        if (try == MAX_TRY) {
+            return;
         }
 
         // Se déplace
@@ -187,7 +195,8 @@ static void moveOgre(Monster* monster, Labyrinth* labyrinth, int penality) {
     Square newSquare;
     Square lastSquare;
 
-    for (int try = 0; try < 4; try++) {
+    int try;
+    for (try = 0; try < MAX_TRY; try++) {
         newPosition = nextPosition(monster->position, direction);
         newSquare = newOgreSquare(getSquare(
             labyrinth, newPosition.y, newPosition.x
@@ -196,11 +205,15 @@ static void moveOgre(Monster* monster, Labyrinth* labyrinth, int penality) {
             labyrinth, monster->position.y, monster->position.x
         ));
 
-        if (newSquare != SQU_NULL) {
+        if (newSquare != SQU_NULL && lastSquare != SQU_NULL) {
             break;
         }
         
         direction = (direction + 1) % 4;
+    }
+
+    if (try == MAX_TRY) {
+        return;
     }
 
     // Se déplace
@@ -224,7 +237,7 @@ static Position nextPosition(Position position, Direction direction) {
             newPosition.x = position.x - 1;
             newPosition.y = position.y;
             break;
-        case DIR_UP:
+        case DIR_DOWN:
             newPosition.x = position.x;
             newPosition.y = position.y + 1;
             break;
