@@ -8,9 +8,9 @@ P_OBJ = obj
 P_BIN = bin
 P_LABYRINTHS = labyrinths
 P_SCORES = scores
+P_DOCUMENTATION = documentation
 
 EXEC = $(P_BIN)/labyrinth.bin
-
 
 all: $(EXEC) | mkdirs
 
@@ -47,11 +47,15 @@ $(P_OBJ)/menu.o: $(P_SRC)/menu.c
 $(P_OBJ)/monsters.o: $(P_SRC)/monsters.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ -c $<
 
+doc: | mkdirs
+	doxygen Doxyfile
+
 mkdirs:
 	mkdir -p $(P_OBJ)
 	mkdir -p $(P_BIN)
 	mkdir -p $(P_LABYRINTHS)
 	mkdir -p $(P_SCORES)
+	mkdir -p $(P_DOCUMENTATION)
 
 clean:
 	rm -f $(P_OBJ)/*
