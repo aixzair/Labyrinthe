@@ -5,13 +5,14 @@ Tests :
 - menus
 - monsters : déplacement des monstres
 - test user_interface
-- game : test move
+- game : améliorer test move
 - game : améliorer test isGameOver
 - game : améliorer test endGame
 - game.h !!!!
 - labyrinth_generator : test addObjectsInLabyrinth
 - labyrinth_repository : test autres fonctions non testés
 - scores : tout les tests
+- test : inputs, améliroation, fonctions manquantes
 
 Jeu :
 - problème déplacement monstres

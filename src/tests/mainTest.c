@@ -4,6 +4,7 @@
 
 
 #include "game.h"
+#include "inputs.h"
 #include "labyrinth_generator.h"
 #include "labyrinth_repository.h"
 #include "monsters.h"
@@ -64,8 +65,52 @@ MU_TEST(test_isGameOver) {
     mu_assert_int_eq(1, isGameOver(&game));
 }
 
+MU_TEST(test_move) {
+    mu_assert_int_eq(0, move(NULL, 122334534));
+
+    Labyrinth* labyrinth = generateLabyrinthForTest(11, 11);
+    labyrinth->squares[1][1] = SQU_PLAYER;
+
+    Game* game = startGame(labyrinth);
+    mu_assert_int_eq(0, move(game, 122334534));
+
+    mu_assert_int_eq(0, move(game, DIR_LEFT));
+
+    labyrinth->squares[1][2] = SQU_NULL;
+    mu_assert_int_eq(0, move(game, DIR_RIGHT));
+
+    labyrinth->squares[0][1] = SQU_CORRIDOR;
+    mu_assert_int_eq(1, move(game, DIR_UP));
+
+    labyrinth->squares[0][2] = SQU_DOOR;
+    mu_assert_int_eq(0, move(game, DIR_DOWN));
+
+    labyrinth->squares[1][1] = SQU_KEY;
+    mu_assert_int_eq(1, move(game, DIR_DOWN));
+    mu_check(SQU_END == getSquare(labyrinth, 0, 2));
+
+    mu_assert_int_eq(1, move(game, DIR_UP));
+    
+    mu_assert_int_eq(0, isGameOver(game));
+    mu_assert_int_eq(1, move(game, DIR_RIGHT));
+    mu_assert_int_eq(1, isGameOver(game));
+
+    endGame(game);
+    destroyLabyrinth(labyrinth);
+}
+
 MU_TEST(test_endGame) {
     endGame(NULL);
+
+    Labyrinth* labyrinth = generateLabyrinth(11, 11);
+
+    Game* game = startGame(labyrinth);
+
+    mu_check(NULL != game);
+    endGame(game);
+    mu_check(NULL == game);
+
+    destroyLabyrinth(labyrinth);
 }
 
 // Test : labyrinth -------------------------------------------------------------------------------
@@ -140,7 +185,7 @@ MU_TEST(test_generateLabyrinth) {
 // Test : labyrinth_repository --------------------------------------------------------------------
 
 MU_TEST(test_saveAndLoadLabyrinth) {
-    char labyrinthName = "test_saveAndLoadLabyrinth";
+    char* labyrinthName = "test_saveAndLoadLabyrinth";
 
     // Save
     Labyrinth* labyrinth = generateLabyrinth(5, 5);
@@ -170,7 +215,7 @@ MU_TEST(test_saveAndLoadLabyrinth) {
     }
 
     destroyLabyrinth(other);
-    destroyLabyrinth(labyrinthName);
+    destroyLabyrinth(labyrinth);
 }
 
 // Test : monsters --------------------------------------------------------------------------------
@@ -189,36 +234,157 @@ MU_TEST(test_addAndGetMonsters) {
     destroyLabyrinth(labyrinth);
 }
 
-// TODO : getMonsters
-// TODO : isMonster
-// TODO : killMonster
-// TODO : destroyMonsters
+MU_TEST(test_isMonster) {
+    int normalCount = 9;
+    Square normalSquares[] = {
+        SQU_CORRIDOR,
+        SQU_WALL,
+        SQU_COIN,
+        SQU_TRAP,
+        SQU_KEY,
+        SQU_DOOR,
+        SQU_END,
+        SQU_PLAYER,
+        SQU_NULL
+    };
+
+    int monsterCount = 9;
+    Square monsterSquares[] = {
+        SQU_OGRE,
+        SQU_OGRE_IN_COIN,
+        SQU_OGRE_IN_TRAP,
+        SQU_OGRE_IN_KEY,
+        SQU_SPECTRUM,
+        SQU_SPECTRUM_IN_WALL,
+        SQU_SPECTRUM_IN_COIN,
+        SQU_SPECTRUM_IN_TRAP,
+        SQU_SPECTRUM_IN_KEY,
+    };
+
+    Labyrinth* labyrinth = generateLabyrinthForTest(5, 5);
+
+    Position position = {2, 2};
+    mu_assert_int_eq(0, isMonster(NULL, position));
+
+    Position wrong = {-1, -1};
+    mu_assert_int_eq(0, isMonster(labyrinth, wrong));
+
+    for (int i = 0; i < normalCount; i++) {
+        labyrinth->squares[2][2] = normalSquares[i];
+        mu_assert_int_eq(0, isMonster(labyrinth, position));
+    }
+
+    for (int i = 0; i < monsterCount; i++) {
+        labyrinth->squares[2][2] = monsterSquares[i];
+        mu_assert_int_eq(1, isMonster(labyrinth, position));
+    }
+
+    destroyLabyrinth(labyrinth);
+}
+
+MU_TEST(test_killMonster) {
+    Labyrinth* labyrinth = generateLabyrinth(7, 7);
+    addMonsters(labyrinth);
+    Monsters* monsters = getMonsters(labyrinth);
+
+    int count = monsters->count;
+    if (count > 0) {
+        Monster* monster = monsters->monsters[0];
+
+        killMonster(monsters, monster->position);
+
+        mu_check(count - 1 == (int) monsters->count);
+        mu_check(monster != monsters->monsters[0]);
+    }
+
+    destroyMonsters(monsters);
+    destroyLabyrinth(labyrinth);
+}
+
+MU_TEST(test_destroyMonsters) {
+    destroyMonsters(NULL);
+
+    Labyrinth* labyrinth = generateLabyrinth(7, 7);
+    addMonsters(labyrinth);
+    Monsters* monsters = getMonsters(labyrinth);
+
+    destroyMonsters(monsters);
+    mu_check(NULL == monsters);
+
+    destroyLabyrinth(labyrinth);
+}
 
 // Test : inputs ----------------------------------------------------------------------------------
-// TODO : askForCharInList
-// TODO : askForIntInList
-// TODO : askForIntInRange
-// TODO : askForString
-// TODO : fastAskForCharInList
 
-MU_TEST(test_free_resets_state) {
-    /*struct matrix_t m;
+MU_TEST(test_askForCharInList) {
+    printf("START --------------------------\n");
+    printf("test : test_askForCharInList\n");
 
-    m = alloc_matrix(3u, 4u);
-    init_matrix(&m, DOT_KEY);
-    free_matrix(&m);
-    mu_assert_int_eq(0, (int)m.rows);
-    mu_assert_int_eq(0, (int)m.columns);
-    mu_check(m.data == NULL);
+    printf("Valeurs autorisées : 'a', 'b', 'c'\n");
+    char values[] = {'a', 'b', 'c'};
 
-    free_matrix(&m);
-    mu_assert_int_eq(0, (int)m.rows);
-    mu_assert_int_eq(0, (int)m.columns);
-    mu_check(m.data == NULL);*/
+    char c = askForCharInList(values, 3);
+    printf("retour : %c\n", c);
+    
+    printf("END ----------------------------\n");
+}
+
+MU_TEST(test_askForIntInList) {
+    printf("START --------------------------\n");
+    printf("test : test_askForIntInList\n");
+
+    printf("Valeurs autorisées : '-4', '6', '123'\n");
+    int values[] = {-4, 6, 123};
+
+    int i = askForIntInList(values, 3);
+    printf("retour : %d\n", i);
+    
+    printf("END ----------------------------\n");
+}
+
+MU_TEST(test_askForIntInRange) {
+    printf("START --------------------------\n");
+    printf("test : test_askForIntInRange\n");
+
+    printf("Valeurs autorisées : [-15 ; 10]\n");
+
+    int i = askForIntInRange(-15, 10);
+    printf("retour : %d\n", i);
+    
+    printf("END ----------------------------\n");
+}
+
+MU_TEST(test_askForString) {
+    printf("START --------------------------\n");
+    printf("test : test_askForString\n");
+
+    printf("Chaine total de 4 caractères :\n");
+
+    char* string = malloc(sizeof(char) * 4);
+
+    askForString(string, 4);
+    printf("retour : %s\n", string);
+    
+    free(string);
+    printf("END ----------------------------\n");
+}
+
+MU_TEST(test_fastAskForCharInList) {
+    printf("START --------------------------\n");
+    printf("test : test_fastAskForCharInList\n");
+
+    printf("Valeurs autorisées : 'd', 'e', 'f', sans appuyer sur la touche entrée.\n");
+    char values[] = {'d', 'e', 'f'};
+
+    char c = fastAskForCharInList(values, 3);
+    printf("retour : %c\n", c);
+    
+    printf("END ----------------------------\n");
 }
 
 MU_TEST_SUITE(test_suite) {
     MU_RUN_TEST(test_startGame);
+    MU_RUN_TEST(test_move);
     MU_RUN_TEST(test_isGameOver);
     MU_RUN_TEST(test_endGame);
 
@@ -229,6 +395,17 @@ MU_TEST_SUITE(test_suite) {
 
     MU_RUN_TEST(test_generateLabyrinth);
     MU_RUN_TEST(test_saveAndLoadLabyrinth);
+
+    MU_RUN_TEST(test_addAndGetMonsters);
+    MU_RUN_TEST(test_isMonster);
+    MU_RUN_TEST(test_killMonster);
+    MU_RUN_TEST(test_destroyMonsters);
+
+    MU_RUN_TEST(test_askForCharInList);
+    MU_RUN_TEST(test_askForIntInList);
+    MU_RUN_TEST(test_askForIntInRange);
+    MU_RUN_TEST(test_askForString);
+    MU_RUN_TEST(test_fastAskForCharInList);
 }
 
 int main(void) {

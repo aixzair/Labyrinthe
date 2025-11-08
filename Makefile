@@ -11,13 +11,23 @@ P_SCORES = scores
 P_DOCUMENTATION = documentation
 
 EXEC = $(P_BIN)/labyrinth.bin
+TEST = $(P_BIN)/tests.bin
 
-all: $(EXEC) | mkdirs
+all: labyrinth tests | mkdirs
+
+labyrinth : $(EXEC)
+tests : $(TEST)
 
 $(EXEC): $(P_OBJ)/main.o $(P_OBJ)/labyrinth.o $(P_OBJ)/labyrinth_generator.o $(P_OBJ)/inputs.o $(P_OBJ)/labyrinth_repository.o $(P_OBJ)/user_interface.o $(P_OBJ)/game.o $(P_OBJ)/leaderboard.o $(P_OBJ)/menu.o $(P_OBJ)/monsters.o
 	$(CC) $(CFLAGS) $(CPPFLAGS) $^ -o $@
 
+$(TEST): $(P_OBJ)/mainTest.o $(P_OBJ)/labyrinth.o $(P_OBJ)/labyrinth_generator.o $(P_OBJ)/inputs.o $(P_OBJ)/labyrinth_repository.o $(P_OBJ)/user_interface.o $(P_OBJ)/game.o $(P_OBJ)/leaderboard.o $(P_OBJ)/menu.o $(P_OBJ)/monsters.o
+	$(CC) $(CFLAGS) $(CPPFLAGS) $^ -o $@
+
 $(P_OBJ)/main.o: $(P_SRC)/main.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ -c $<
+
+$(P_OBJ)/mainTest.o: $(P_SRC)/tests/mainTest.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ -c $<
 
 $(P_OBJ)/labyrinth.o: $(P_SRC)/labyrinth.c $(P_INCLUDE)/labyrinth.h
