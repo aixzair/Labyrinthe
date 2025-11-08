@@ -5,8 +5,17 @@
 #include <termios.h>
 #include <unistd.h>
 
+// Prototypes statiques ---------------------------------------------------------------------------
+
+/**
+ * @brief Vide le buffer d'entrée standard.
+ *
+ * Cette fonction est utilisée pour consommer les caractères restants
+ * dans le buffer après une saisie utilisateur afin d'éviter des erreurs.
+ */
 static void clearBuffer();
 
+// Implémentations statiques ----------------------------------------------------------------------
 
 static void clearBuffer() {
     int c;
@@ -15,6 +24,7 @@ static void clearBuffer() {
     } while (c != '\n' && c != EOF);
 }
 
+// Implémentations --------------------------------------------------------------------------------
 
 char askForChar() {
     char input = getchar();

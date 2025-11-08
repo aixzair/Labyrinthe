@@ -4,8 +4,12 @@
 #include <stdlib.h>
 #include <time.h>
 
+// Defines ----------------------------------------------------------------------------------------
+
 #define MATRICE_WALL -1
 #define MAX_TRY 1000
+
+// Structs ----------------------------------------------------------------------------------------
 
 typedef struct {
     int groupCount;
@@ -14,28 +18,82 @@ typedef struct {
     int** values;
 } Matrice;
 
+// Prototypes statiques ---------------------------------------------------------------------------
 
-// Static declaration -----------------------------------------------------------------------------
-
+/**
+ * @brief Génère un entier aléatoire dans un intervalle donné.
+ *
+ * @param min Valeur minimale incluse.
+ * @param max Valeur maximale incluse.
+ * @return Entier aléatoire compris entre min et max.
+ */
 static int randomInt(int min, int max);
 
+/**
+ * @brief Crée une nouvelle matrice de taille spécifiée.
+ *
+ * @param lines Nombre de lignes.
+ * @param cols Nombre de colonnes.
+ * @return Nouvelle matrice initialisée.
+ */
 static Matrice newMatrice(size_t lines, size_t cols);
 
+/**
+ * @brief Libère la mémoire allouée pour une matrice.
+ *
+ * @param matrice Pointeur vers la matrice à détruire.
+ */
 static void destroyMatrice(Matrice* matrice);
 
+/**
+ * @brief Cherche une position interne pour fusion dans une matrice.
+ *
+ * @param matrice Pointeur vers la matrice.
+ * @param line Pointeur pour stocker la ligne trouvée.
+ * @param col Pointeur pour stocker la colonne trouvée.
+ * @return 1 si une position est trouvée, 0 sinon.
+ */
 static int findInnerPlaceToMerge(const Matrice* matrice, size_t* line, size_t* col);
 
+/**
+ * @brief Fusionne une position spécifique dans une matrice.
+ *
+ * @param matrice Pointeur vers la matrice.
+ * @param line Ligne de la position à fusionner.
+ * @param col Colonne de la position à fusionner.
+ * @return 1 si la fusion réussit, 0 sinon.
+ */
 static int mergePlace(const Matrice* matrice, size_t line, size_t col);
 
+/**
+ * @brief Génère une nouvelle matrice initialisée de taille donnée.
+ *
+ * @param lines Nombre de lignes.
+ * @param cols Nombre de colonnes.
+ * @return Nouvelle matrice générée.
+ */
 static Matrice generateMatrice(size_t lines, size_t cols);
 
-
+/**
+ * @brief Crée un nouveau labyrinthe à partir d'une matrice.
+ *
+ * @param matrice Matrice utilisée pour générer le labyrinthe.
+ * @return Pointeur vers le labyrinthe créé.
+ */
 static Labyrinth* newLabyrinthFromMatrice(Matrice matrice);
 
+/**
+ * @brief Cherche une case aléatoire de type spécifique dans le labyrinthe.
+ *
+ * @param labyrinth Pointeur vers le labyrinthe.
+ * @param type Type de case recherché.
+ * @param line Pointeur pour stocker la ligne trouvée.
+ * @param col Pointeur pour stocker la colonne trouvée.
+ * @return 1 si une case est trouvée, 0 sinon.
+ */
 static int findRamdomSquare(const Labyrinth* labyrinth, Square type, size_t* line, size_t* col);
 
-
-// Static implementation --------------------------------------------------------------------------
+// Implémentations statiques ----------------------------------------------------------------------
 
 static int randomInt(int min, int max) {
     int range = max - min + 1;
@@ -216,7 +274,7 @@ static int findRamdomSquare(const Labyrinth* labyrinth, Square type, size_t* lin
     return 0;
 }
 
-// Non-Static implementation ----------------------------------------------------------------------
+// Implémentations --------------------------------------------------------------------------------
 
 Labyrinth* generateLabyrinth(size_t height, size_t width) {
     srand(time(NULL));

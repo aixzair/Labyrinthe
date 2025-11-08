@@ -1,7 +1,6 @@
 #include "menu.h"
 #include "user_interface.h"
 
-
 int main(void) {
     Menu* menu = createMenu();
 
@@ -20,7 +19,7 @@ int main(void) {
                 playGameAction(menu);
                 break;
             case ACT_SCORE:
-                showScoresActoin(menu);
+                showScoresAction(menu);
             default:
                 break;
         }

@@ -5,12 +5,31 @@
 
 #include "labyrinth.h"
 
+// Defines ----------------------------------------------------------------------------------------
+
 #define PATH_LABYRINTH "labyrinths"
 #define PATH_SCORE "scores"
 #define FILE_PATH_LENGTH 200
 
+// Prototypes statiques ---------------------------------------------------------------------------
+
+/**
+ * @brief Génère le chemin complet d'un fichier à partir de son nom.
+ *
+ * @param fileName Nom du fichier.
+ * @return Chaîne contenant le chemin complet du fichier.
+ */
 static char* getFilePath(const char* fileName);
+
+/**
+ * @brief Génère le chemin complet du fichier de scores associé à un labyrinthe.
+ *
+ * @param fileName Nom du labyrinthe.
+ * @return Chaîne contenant le chemin complet du fichier de scores.
+ */
 static char* getScoreFilePath(const char* fileName);
+
+// Implémentations statiques ----------------------------------------------------------------------
 
 static char* getFilePath(const char* fileName) {
     char* filePath = malloc(sizeof(char) * FILE_PATH_LENGTH);
@@ -42,6 +61,8 @@ static char* getScoreFilePath(const char* fileName) {
     return filePath;
 
 }
+
+// Implémentations --------------------------------------------------------------------------------
 
 int getLabyrinthsNames(char** names, int namesLength, int stringLength) {
     FILE* file = popen("ls -p " PATH_LABYRINTH " | grep -v / | grep '\\.cfg$' | sed 's/\\.cfg$//'", "r");
@@ -127,7 +148,6 @@ int saveLabyrinth(const char* fileName, const Labyrinth* labyrinth) {
     return 1;
 }
 
-// count or -1
 Leaderboard* loadLeaderboard(const char* labyrinthName) {
     char* path = getScoreFilePath(labyrinthName);
     if (path == NULL) {
@@ -153,7 +173,6 @@ Leaderboard* loadLeaderboard(const char* labyrinthName) {
     return leaderboard;
 }
 
-// 1 or 0
 int saveLeaderboard(const char* labyrinthName, const Leaderboard* leaderboard) {
     char* path = getScoreFilePath(labyrinthName);
     if (path == NULL) {

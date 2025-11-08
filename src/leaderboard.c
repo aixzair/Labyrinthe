@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Implémentations --------------------------------------------------------------------------------
+
 Leaderboard* createLeaderboard(int count) {
     Leaderboard* leaderboard = malloc(sizeof(Leaderboard));
     

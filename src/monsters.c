@@ -3,38 +3,115 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "direction.h"
+
+// Defines ----------------------------------------------------------------------------------------
+
 #define MAX_TRY 4
 
-typedef enum {
-    DIR_UP = 0,
-    DIR_DOWN = 1,
-    DIR_LEFT = 2,
-    DIR_RIGHT = 3
-} Direction;
+// Prototypes statiques ---------------------------------------------------------------------------
 
+/**
+ * @brief Génère un entier aléatoire dans un intervalle donné.
+ *
+ * @param min Valeur minimale incluse.
+ * @param max Valeur maximale incluse.
+ * @return Entier aléatoire compris entre min et max.
+ */
 static int randomInt(int min, int max);
 
+/**
+ * @brief Crée un spectre à une position donnée.
+ *
+ * @param line Ligne de départ du spectre.
+ * @param col Colonne de départ du spectre.
+ * @return Pointeur vers le spectre créé.
+ */
 static Spectrum* createSpectrum(int line, int col);
 
+/**
+ * @brief Libère la mémoire allouée pour un spectre.
+ *
+ * @param monster Pointeur vers le spectre à détruire.
+ */
 static void destroySpectrum(Monster* monster);
 
+/**
+ * @brief Crée un ogre à une position donnée.
+ *
+ * @param line Ligne de départ de l'ogre.
+ * @param col Colonne de départ de l'ogre.
+ * @return Pointeur vers l'ogre créé.
+ */
 static Ogre* createOgre(int line, int col);
 
+/**
+ * @brief Libère la mémoire allouée pour un ogre.
+ *
+ * @param monster Pointeur vers l'ogre à détruire.
+ */
 static void destroyOgre(Monster* monster);
 
+/**
+ * @brief Déplace un spectre dans le labyrinthe avec pénalité.
+ *
+ * @param monster Pointeur vers le spectre à déplacer.
+ * @param labyrinth Pointeur vers le labyrinthe.
+ * @param penality Pénalité à appliquer lors du déplacement.
+ */
 static void moveSpectrum(Monster* monster, Labyrinth* labyrinth, int penality);
 
+/**
+ * @brief Récupère le type de case correspondant à une case avec un spectre.
+ *
+ * @param square Case actuelle du spectre.
+ * @return Case correspondant à l'état précédent.
+ */
 static Square lastSpectrumSquare(Square square);
 
+/**
+ * @brief Récupère le type de case correspondant à l'état sans spectre.
+ *
+ * @param square Case actuelle du spectre.
+ * @return Case correspondant à l'état futur.
+ */
 static Square newSpectrumSquare(Square square);
 
+/**
+ * @brief Déplace un ogre dans le labyrinthe avec pénalité.
+ *
+ * @param monster Pointeur vers l'ogre à déplacer.
+ * @param labyrinth Pointeur vers le labyrinthe.
+ * @param penality Pénalité à appliquer lors du déplacement.
+ */
 static void moveOgre(Monster* monster, Labyrinth* labyrinth, int penality);
 
+/**
+ * @brief Récupère le type de case correspondant à une case sans ogre.
+ *
+ * @param square Case actuelle de l'ogre.
+ * @return Case correspondant à l'état précédent.
+ */
 static Square lastOgreSquare(Square square);
 
+/**
+ * @brief Récupère le type de case correspondant à une case avec ogre.
+ *
+ * @param square Case actuelle de l'ogre.
+ * @return Case correspondant à l'état futur.
+ */
 static Square newOgreSquare(Square square);
 
+/**
+ * @brief Calcule la position suivante à partir d'une position et d'une direction.
+ *
+ * @param position Position actuelle.
+ * @param direction Direction du déplacement.
+ * @return Nouvelle position après déplacement.
+ */
 static Position nextPosition(Position position, Direction direction);
+
+// Implémentations statiques ----------------------------------------------------------------------
 
 static int randomInt(int min, int max) {
     int range = max - min + 1;
@@ -249,6 +326,7 @@ static Position nextPosition(Position position, Direction direction) {
     return newPosition;
 }
 
+// Implémentations --------------------------------------------------------------------------------
 
 void addMonsters(Labyrinth* labyrinth) {
     srand(time(NULL));

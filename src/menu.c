@@ -11,12 +11,22 @@
 #include "user_interface.h"
 #include "monsters.h"
 
+// Defines ----------------------------------------------------------------------------------------
+
 #define LABYRINTH_NAME_LENGTH 40
 #define LABYRINTH_COUNT_MAX 100
 #define SCORE_COUNT_MAX 10
 
+// Prototypes statiques ---------------------------------------------------------------------------
 
+/**
+ * @brief Supprime le labyrinthe actuellement chargé depuis le menu.
+ *
+ * @param menu Pointeur vers le menu contenant le labyrinthe à détruire.
+ */
 static void destroyLabyrinthFromMenu(Menu* menu);
+
+// Implémentations statiques ----------------------------------------------------------------------
 
 static void destroyLabyrinthFromMenu(Menu* menu) {
     if (menu->labyrinth == NULL) {
@@ -27,6 +37,8 @@ static void destroyLabyrinthFromMenu(Menu* menu) {
     free(menu->labyrinth);
     menu->labyrinth = NULL;
 }
+
+// Implémentations --------------------------------------------------------------------------------
 
 Menu* createMenu() {
     Menu* menu = malloc(sizeof(Menu));
@@ -153,7 +165,7 @@ void playGameAction(Menu* menu) {
     menu->labyrinth = new;
 }
 
-void showScoresActoin(Menu* menu) {
+void showScoresAction(Menu* menu) {
     Leaderboard* leaderboard = loadLeaderboard(menu->labyrinth->name);
     
     displayLeaderboard(menu->labyrinth->name, leaderboard);

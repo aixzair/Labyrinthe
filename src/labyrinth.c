@@ -1,5 +1,7 @@
 #include "labyrinth.h"
 
+// Implémentations --------------------------------------------------------------------------------
+
 int isValidSquare(const Labyrinth* labyrinth, int line, int col) {
     return labyrinth != NULL
         && (size_t) line < labyrinth->height

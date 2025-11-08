@@ -2,10 +2,14 @@
 
 #include "labyrinth.h"
 
+// Defines ----------------------------------------------------------------------------------------
+
 #define TRAP_MALUS 10
 #define TURN_MALUS 1
 #define MONSTER_MALUS 30
 #define COIN_BONUS 20
+
+// Implémentations --------------------------------------------------------------------------------
 
 Game* startGame(Labyrinth* labyrinth) {
     Game* game = malloc(sizeof(Game));
