@@ -6,6 +6,8 @@ geometry: margin=2.5cm
 fontsize: 12pt
 ---
 
+\newpage
+
 # Fonctionnalités
 
 1. [Créer un labyrinthe](#créer-un-labyrinthe)  
@@ -35,6 +37,13 @@ Permet de jouer dans le labyrinthe chargé.
 
 Vous commencez en haut à gauche et devez vous rendre en bas à droite en récupérant la clé pour déverrouiller la porte.
 **Attention :** les monstres, les pièges ainsi que vos déplacements vous feront perdre des points, tandis que les pièces vous en rapporteront.
+
+## Déplacements
+
+- Haut : 'z'
+- Bas : 's'
+- Gauche : 'q'
+- Droite : 'd'
 
 ## Définition des cases
 

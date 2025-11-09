@@ -6,7 +6,15 @@ geometry: margin=2.5cm
 fontsize: 12pt
 ---
 
+\newpage
+
 # Sommaire
+
+- [Travail effectué](#travail-effectué)  
+- [Travail à faire](#travail-à-faire)  
+- [Points importants](#points-importants)  
+- [Limites et bugs](#limites-et-bugs)
+
 
 \newpage
 
@@ -24,7 +32,7 @@ fontsize: 12pt
 - Mettre en place une interface graphique (autre que la console)
 - Permettre à un joueur de visualiser ses différents scores sur les différents labyrinthes
 - Meilleure gestion du nombre maximal de labyrinthes
-- Créer un fichier **README** en plus des manuels
+- Créer un fichier Readme en plus des manuels
 
 ## Tests
 
