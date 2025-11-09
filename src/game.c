@@ -121,6 +121,7 @@ int move(Game* game, Direction direction) {
     if (isMonster(game->labyrinth, newPosition)) {
         killMonster(game->monsters, newPosition);
         game->score -= MONSTER_MALUS;
+        game->monsters->penalityCount++;
     }
 
     game->score -= TURN_MALUS;

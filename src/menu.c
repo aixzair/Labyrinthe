@@ -34,7 +34,6 @@ static void destroyLabyrinthFromMenu(Menu* menu) {
     }
 
     destroyLabyrinth(menu->labyrinth);
-    free(menu->labyrinth);
     menu->labyrinth = NULL;
 }
 

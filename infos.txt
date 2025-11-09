@@ -1,0 +1,1 @@
+pandoc Manuel_Joueur.md -o Manuel_Joueur.pdf --pdf-engine=xelatex

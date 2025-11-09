@@ -67,5 +67,12 @@ mkdirs:
 	mkdir -p $(P_SCORES)
 	mkdir -p $(P_DOCUMENTATION)
 
+manuals:
+	pandoc Manuel_Joueur.md -o Manuel_Joueur.pdf --pdf-engine=xelatex
+
 clean:
 	rm -f $(P_OBJ)/*
+
+clean_labyrinths:
+	rm -f $(P_LABYRINTHS)/*
+	rm -f $(P_SCORES)/*
