@@ -69,6 +69,7 @@ mkdirs:
 
 manuals:
 	pandoc Manuel_Joueur.md -o Manuel_Joueur.pdf --pdf-engine=xelatex
+	pandoc Manuel_Developpeur.md -o Manuel_Developpeur.pdf --pdf-engine=xelatex
 
 clean:
 	rm -f $(P_OBJ)/*

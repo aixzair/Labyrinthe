@@ -19,7 +19,7 @@ fontsize: 12pt
 # 1. Créer un labyrinthe
 
 Permet de générer un nouveau labyrinthe.  
-Il faut renseigner la hauteur et la largeur, toutes deux comprises dans l’intervalle [5 ; 99] et impaires.  
+Il faut renseigner la hauteur et la largeur, toutes deux comprises dans l’intervalle [5 ; 99] et impaires.
 Il faut aussi indiquer un nom du labyrinthe et choisir si on ajoute des monstres.
 
 # 2. Charger un labyrinthe
@@ -33,7 +33,7 @@ Permet de jouer dans le labyrinthe chargé.
 
 ## But du jeu
 
-Vous commencez en haut à gauche et devez vous rendre en bas à droite en récupérant la clé pour déverrouiller la porte.  
+Vous commencez en haut à gauche et devez vous rendre en bas à droite en récupérant la clé pour déverrouiller la porte.
 **Attention :** les monstres, les pièges ainsi que vos déplacements vous feront perdre des points, tandis que les pièces vous en rapporteront.
 
 ## Définition des cases
