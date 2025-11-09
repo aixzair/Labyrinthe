@@ -277,6 +277,12 @@ static int findRamdomSquare(const Labyrinth* labyrinth, Square type, size_t* lin
 // Implémentations --------------------------------------------------------------------------------
 
 Labyrinth* generateLabyrinth(size_t height, size_t width) {
+    if (height < 5 || width < 5) {
+        return NULL;
+    } else if (height % 2 != 1 || width % 2 != 1) {
+        return NULL;
+    }
+
     srand(time(NULL));
 
     Matrice matrice = generateMatrice(height, width);

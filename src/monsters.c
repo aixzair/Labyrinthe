@@ -335,8 +335,7 @@ void addMonsters(Labyrinth* labyrinth) {
     size_t wallCount = (labyrinth->height - 2) * (labyrinth->width - 2) * 0.05;
 
     for (size_t i = 0; i < wallCount; i++) {
-        int success = 0;
-        do {
+        for (int try = 0; try < MAX_TRY; try++) {
             int line = randomInt(1, labyrinth->height - 2);
             int col = randomInt(1, labyrinth->width - 2);
 
@@ -344,16 +343,17 @@ void addMonsters(Labyrinth* labyrinth) {
                 continue;
             }
 
-            success = setSquare(labyrinth, line, col, SQU_CORRIDOR);
-        } while (!success);
+            if(setSquare(labyrinth, line, col, SQU_CORRIDOR)) {
+                break;
+            }
+        }
     }
 
     // Ajoute les ogres
     size_t ogreCount = (labyrinth->height - 2) * (labyrinth->width - 2) * 0.05;
 
     for (size_t i = 0; i < ogreCount; i++) {
-        int success = 0;
-        do {
+        for (int try = 0; try < MAX_TRY; try++) {
             int line = randomInt(1, labyrinth->height - 2);
             int col = randomInt(1, labyrinth->width - 2);
 
@@ -361,19 +361,21 @@ void addMonsters(Labyrinth* labyrinth) {
                 continue;
             }
 
-            success = setSquare(labyrinth, line, col, SQU_OGRE_IN_COIN);
-        } while (!success);
+            if (setSquare(labyrinth, line, col, SQU_OGRE_IN_COIN)) {
+                break;
+            }
+        }
     }
 
     // Ajoute les spectres
     size_t spectrumCount = (labyrinth->height - 2) * (labyrinth->width - 2) * 0.05;
 
     for (size_t i = 0; i < spectrumCount; i++) {
-        int success = 0;
-        do {
+        for (int try = 0; try < MAX_TRY; try++) {
             int line = randomInt(1, labyrinth->height - 2);
             int col = randomInt(1, labyrinth->width - 2);
 
+            int success = 0;
             switch (getSquare(labyrinth, line, col)) {
                 case SQU_CORRIDOR:
                     success = setSquare(labyrinth, line, col, SQU_SPECTRUM);
@@ -383,12 +385,20 @@ void addMonsters(Labyrinth* labyrinth) {
                     break;
                 default:
                     continue;
-            }            
-        } while (!success);
+            }
+            
+            if (success) {
+                break;
+            }
+        }
     }
 }
 
 Monsters* getMonsters(const Labyrinth* labyrinth) {
+    if (labyrinth == NULL) {
+        return NULL;
+    }
+
     Monsters* monsters = malloc(sizeof(Monsters));
     monsters->penalityCount = 0;
 
@@ -422,6 +432,12 @@ Monsters* getMonsters(const Labyrinth* labyrinth) {
         }
     }
 
+    if (monsters->count == 0) {
+        destroyMonsters(monsters);
+
+        return NULL;
+    }
+
     return monsters;
 }
 
@@ -433,6 +449,10 @@ void moveMonsters(Labyrinth* labyrinth, Monsters* monsters) {
 }
 
 void destroyMonsters(Monsters* monsters) {
+    if (monsters == NULL) {
+        return;
+    }
+
     for (size_t i = 0; i < monsters->count; i++) {
         monsters->monsters[i]->destroy(monsters->monsters[i]);
     }
@@ -462,6 +482,8 @@ void killMonster(Monsters* monsters, Position position) {
     monsters->monsters[monsterIndex]->destroy(monsters->monsters[monsterIndex]);
     if (monsterIndex != monsters->count - 1) {
         monsters->monsters[monsterIndex] = monsters->monsters[monsters->count - 1];
+    } else {
+        monsters->monsters[monsterIndex] = NULL;
     }
     monsters->count--;
 }

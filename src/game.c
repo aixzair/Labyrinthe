@@ -12,6 +12,10 @@
 // Implémentations --------------------------------------------------------------------------------
 
 Game* startGame(Labyrinth* labyrinth) {
+    if (labyrinth == NULL) {
+        return NULL;
+    }
+
     Game* game = malloc(sizeof(Game));
 
     game->gameOver = 0;
@@ -130,10 +134,16 @@ int move(Game* game, Direction direction) {
 }
 
 int isGameOver(Game* game) {
+    if (game == NULL) {
+        return 0;
+    }
     return game->gameOver;
 }
 
 void endGame(Game* game){
+    if (game == NULL) {
+        return;
+    }
     if (game->monsters != NULL) {
         destroyMonsters(game->monsters);
     }

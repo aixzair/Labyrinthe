@@ -32,6 +32,10 @@ static char* getScoreFilePath(const char* fileName);
 // Implémentations statiques ----------------------------------------------------------------------
 
 static char* getFilePath(const char* fileName) {
+    if (fileName == NULL) {
+        return NULL;
+    }
+
     char* filePath = malloc(sizeof(char) * FILE_PATH_LENGTH);
     if (filePath == NULL) {
         return NULL;
@@ -47,6 +51,10 @@ static char* getFilePath(const char* fileName) {
 }
 
 static char* getScoreFilePath(const char* fileName) {
+    if (fileName == NULL) {
+        return NULL;
+    }
+
     char* filePath = malloc(sizeof(char) * FILE_PATH_LENGTH);
     if (filePath == NULL) {
         return NULL;
@@ -65,6 +73,12 @@ static char* getScoreFilePath(const char* fileName) {
 // Implémentations --------------------------------------------------------------------------------
 
 int getLabyrinthsNames(char** names, int namesLength, int stringLength) {
+    if (names == NULL) {
+        return 0;
+    } else if (namesLength < 0 || stringLength < 0) {
+        return 0;
+    }
+
     FILE* file = popen("ls -p " PATH_LABYRINTH " | grep -v / | grep '\\.cfg$' | sed 's/\\.cfg$//'", "r");
     if (file == NULL) {
         return -1;
@@ -89,6 +103,10 @@ int getLabyrinthsNames(char** names, int namesLength, int stringLength) {
 }
 
 Labyrinth* loadLabyrinth(const char* fileName) {
+    if (fileName == NULL) {
+        return NULL;
+    }
+
     Labyrinth* labyrinth = malloc(sizeof(Labyrinth));
     labyrinth->name = malloc(strlen(fileName) + 1);
     strcpy(labyrinth->name, fileName);
@@ -124,6 +142,10 @@ Labyrinth* loadLabyrinth(const char* fileName) {
 }
 
 int saveLabyrinth(const char* fileName, const Labyrinth* labyrinth) {
+    if (fileName == NULL || labyrinth == NULL) {
+        return 0;
+    }
+
     char* path = getFilePath(fileName);
     if (path == NULL) {
         return 0;
@@ -149,6 +171,10 @@ int saveLabyrinth(const char* fileName, const Labyrinth* labyrinth) {
 }
 
 Leaderboard* loadLeaderboard(const char* labyrinthName) {
+    if (labyrinthName == NULL) {
+        return NULL;
+    }
+
     char* path = getScoreFilePath(labyrinthName);
     if (path == NULL) {
         return NULL;
@@ -174,6 +200,10 @@ Leaderboard* loadLeaderboard(const char* labyrinthName) {
 }
 
 int saveLeaderboard(const char* labyrinthName, const Leaderboard* leaderboard) {
+    if (labyrinthName == NULL || leaderboard == NULL) {
+        return 0;
+    }
+
     char* path = getScoreFilePath(labyrinthName);
     if (path == NULL) {
         return 0;

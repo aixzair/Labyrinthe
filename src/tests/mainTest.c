@@ -1,3 +1,5 @@
+// make clean && make all && valgrind --leak-check=full ./bin/tests.bin 
+
 #include <stdio.h>
 
 #include "./../../ressources/minunit.h"
@@ -83,7 +85,7 @@ MU_TEST(test_move) {
     mu_assert_int_eq(1, move(game, DIR_UP));
 
     labyrinth->squares[0][2] = SQU_DOOR;
-    mu_assert_int_eq(0, move(game, DIR_DOWN));
+    mu_assert_int_eq(0, move(game, DIR_RIGHT));
 
     labyrinth->squares[1][1] = SQU_KEY;
     mu_assert_int_eq(1, move(game, DIR_DOWN));
@@ -108,7 +110,6 @@ MU_TEST(test_endGame) {
 
     mu_check(NULL != game);
     endGame(game);
-    mu_check(NULL == game);
 
     destroyLabyrinth(labyrinth);
 }
@@ -121,7 +122,7 @@ MU_TEST(test_isValidSquare) {
     labyrinth->squares[2][2] = SQU_NULL;
 
     mu_assert_int_eq(0, isValidSquare(labyrinth, 10, 10));
-    mu_assert_int_eq(0, isValidSquare(labyrinth, 2, 2));
+    mu_assert_int_eq(1, isValidSquare(labyrinth, 2, 2));
     mu_assert_int_eq(1, isValidSquare(labyrinth, 2, 1));
 
     destroyLabyrinth(labyrinth);
@@ -144,7 +145,7 @@ MU_TEST(test_getSquare) {
 MU_TEST(test_setSquare) {
     Labyrinth* labyrinth = generateLabyrinthForTest(5, 5);
 
-    mu_assert_int_eq(1, setSquare(labyrinth, 10, 10, SQU_COIN));
+    mu_assert_int_eq(0, setSquare(labyrinth, 10, 10, SQU_COIN));
 
     labyrinth->squares[2][2] = SQU_NULL;
     mu_assert_int_eq(1, setSquare(labyrinth, 2, 2, SQU_COIN));
@@ -156,10 +157,8 @@ MU_TEST(test_setSquare) {
 MU_TEST(test_destroyLabyrinth) {
     destroyLabyrinth(NULL);
 
-    Labyrinth* labyrinth = generateLabyrinthForTest(5, 5);
+    Labyrinth* labyrinth = generateLabyrinthForTest(11, 11);
     destroyLabyrinth(labyrinth);
-
-    mu_check(NULL == labyrinth);
 }
 
 // Test : labyrinth_generator ---------------------------------------------------------------------
@@ -309,8 +308,6 @@ MU_TEST(test_destroyMonsters) {
     Monsters* monsters = getMonsters(labyrinth);
 
     destroyMonsters(monsters);
-    mu_check(NULL == monsters);
-
     destroyLabyrinth(labyrinth);
 }
 

@@ -41,4 +41,5 @@ void destroyLabyrinth(Labyrinth* labyrinth) {
     labyrinth->height = 0;
     labyrinth->width = 0;
     labyrinth->squares = NULL;
+    free(labyrinth);
 }

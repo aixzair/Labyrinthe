@@ -8,8 +8,8 @@
 /**
  * @brief Génère un labyrinthe de taille donnée.
  *
- * @param height Hauteur du labyrinthe.
- * @param width Largeur du labyrinthe.
+ * @param height Hauteur du labyrinthe > 5 et impaire.
+ * @param width Largeur du labyrinthe > 5 et impaire.
  * @return Pointeur vers le labyrinthe généré.
  */
 Labyrinth* generateLabyrinth(size_t height, size_t width);
