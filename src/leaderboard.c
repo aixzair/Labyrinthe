@@ -52,6 +52,9 @@ int updateLeaderboard(Leaderboard* leaderboard, Score score) {
 }
 
 void destroyLeaderboard(Leaderboard* leaderboard) {
+    if (leaderboard == NULL)  {
+        return;
+    }
     leaderboard->count = -1;
     leaderboard->countMax = -1;
     free(leaderboard->scores);
